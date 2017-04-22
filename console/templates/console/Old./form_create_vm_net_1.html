@@ -1,0 +1,85 @@
+{% extends 'console/base.html' %}
+
+
+{% block content%}
+
+ <div class="content-wrapper">
+    <section class="content-header"></section>
+     <div class="row"></div>
+    <div class="row">
+
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+
+            <div class="box box-info">
+                <div class="box-header with-border">
+                    <h3 class="box-title">New Virtual Machine</h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <!-- ./form group -->
+                    <div class="form-group">
+                        {% for item in NIFACES %}
+                            <div class="box box-info">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title">Interface {{ item }}</h3>
+                                    <div class="box-tools pull-right">
+                                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                    </div>
+                                    <!-- /.box-tools -->
+                                </div>
+                                <!-- /.box-header -->
+                                <div class="box-body">
+                                    <div id="iface_{{ item }} }}">
+                                        <label>Iface Type</label>
+                                        <select class="form-control" id="iface_type_{{ item }}">
+                                            {%  for if in NTYPE %}
+                                            <option value="{{ if.value }}">{{ if.name }}</option>
+                                            {%  endfor %}</select>
+                                        <label>Iface Driver</label>
+                                        <select class="form-control" id="iface_driver_{{ item }}r">
+                                            {%  for driver in DRIVERS %}
+                                            <option value="{{ driver }}">{{ driver }}</option>
+                                            {%  endfor %}</select>
+
+                                        </select>
+                                    </div>
+
+
+                                </div>
+                            <!-- /.box-body -->
+                             </div>
+                        {%  endfor %}
+                        {% csrf_token %}
+                        <input type="hidden" id="form_step" value="{{ STEP }}">
+                    </div>
+                    <!-- ./form group -->
+
+
+
+                    </div>
+                    <!-- ./form group -->
+
+                </div>
+                <!-- /.box-body -->
+
+                <div class="box-footer">
+                    <span class="btn-group pull-right">
+                        <input type="button" id="reset_form" class="btn btn-danger" value="Reset">
+                        <input type="button" id="back_form" class="btn btn-warning" value="Back">
+                        <input type="button" id="cont_form" class="btn btn-primary" value="Continue">
+                    </span>
+                </div>
+                <!-- /.box-footer -->
+            </div>
+            <!-- /.box -->
+            </div>
+            <!-- /.box -->
+
+        <div class="col-md-3"></div>
+    </div>
+    <!-- /.row -->
+ </div>
+
+
+{% endblock content %}

@@ -1,0 +1,290 @@
+<div class="box box-solid">
+    <div class="box-header with-border">
+              <h3 class="box-title">Collapsible Accordion</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <div class="box-group" id="accordion">
+                <!-- we are adding the .panel class so bootstrap.js collapse plugin detects it -->
+                <div class="panel box box-primary">
+                  <div class="box-header with-border">
+                    <h4 class="box-title">
+                      <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                        Collapsible Group Item #1
+                      </a>
+                    </h4>
+                  </div>
+                  <div id="collapseOne" class="panel-collapse collapse in">
+                      <div class="box-body">
+                    <div class="row">
+                        <div class="form-group">
+                            <label class="col-md-12">Please fullfill the following data:</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-2">
+                                <label for="vm_name">Name:</label>
+                            </div>
+                            <div class="col-md-4">
+                                <input class="form-control" type="text" id="vm_name" maxlength="30" value="" >
+                            </div>
+                            <div class="col-md-2">
+                                <label class="control-label" for="vh_name">Virtual Host:</label>
+                            </div>
+                            <div class="col-md-4">
+                                <input class="form-control" type="text"  id="vh_name" value="{{ VH.name }}"  readonly>
+                            </div>
+                        </div><!-- ./form group -->
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-2">
+                                <label class="control-label" for="vendor">Virtualization Type:</label>
+                            </div>
+                            <div class="col-md-4">
+                                <input class="form-control" type="text"  id="vendor" value="{{ VH.VType.vendor }}"  readonly>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="vm_ostype">Select OS Type:</label>
+                            </div>
+                            <div class="col-md-4">
+                                <select id="vm_ostype" aria-hidden="true" tabindex="-1" class="form-control select select2-hidden-accessible">
+                                    {% for item in OS %}
+                                    <option value="{{ item.id }}" >{{item.name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div><!-- ./form group -->
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-2">
+                                <label  for="vm_cpu">Number of CPU:</label>
+                            </div>
+                            <div class="col-md-4">
+                                <input class="form-control" type="number" min="1" id="vm_cpu" value="" >
+                            </div>
+                            <div class="col-md-2">
+                                <label  for="vm_mem">Memory (in MB):</label>
+                            </div>
+                            <div class="col-md-4">
+                                <input class="form-control" type="number" min="128" id="vm_mem" value="">
+                            </div>
+                        </div><!-- ./form group -->
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            {% csrf_token %}
+                            <input class="form-control" type="hidden" id="form_step" value="{{ STEP }}" readonly>
+                            <input class="form-control" type="hidden"  id="vm_vhost_id" value="{{ VH.id }}" readonly>
+                         </div><!-- ./form group -->
+                    </div>
+                </div><!-- .box-body -->
+                  </div>
+                </div>
+                <div class="panel box box-danger">
+                  <div class="box-header with-border">
+                    <h4 class="box-title">
+                      <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+                        Collapsible Group Danger
+                      </a>
+                    </h4>
+                  </div>
+                  <div id="collapseTwo" class="panel-collapse collapse">
+                      <div class="box-body">
+                    <div class="row">
+                        <div class="form-group">
+                            <label class="col-md-12"> In order to create the Virtual Disk please fullfill the following data:</label>
+                        </div>
+                    </div>
+                    <div class="row"></div>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-2">
+                                <label for"vm_datastore">Select a Datastore:</label>
+                            </div>
+                            <div class="col-md-4">
+                                <select id="vm_datastore" aria-hidden="true" tabindex="-1" class="form-control select select2-hidden-accessible">
+                                    {% for item in DSTORE %}
+                                    <option value="{{ item.id }}" >{{item.name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                 <label for"vm_dsk_sz">Disk Size (in MB):</label>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="number" min="0" id="vm_dsk_sz" class="form-control" value="" style="width: 30%;">
+                            </div>
+                        </div><!-- ./form group -->
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            {% csrf_token %}
+                            <input type="hidden" id="form_step" value="{{ STEP }}" readonly>
+                            <input type="hidden"  id="vm_vhost_id" value="{{ VH.id }}" readonly>
+                        </div><!-- ./form group -->
+                    </div>
+                </div><!-- .box-body -->
+                  </div>
+                </div>
+                <div class="panel box box-success">
+                  <div class="box-header with-border">
+                    <h4 class="box-title">
+                      <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
+                        Collapsible Group Success
+                      </a>
+                    </h4>
+                  </div>
+                  <div id="collapseThree" class="panel-collapse collapse">
+                       <div class="box-body">
+                    <!-- ./form group -->
+                    <div class="form-group">
+                        {% for item in NIFACES %}
+                            <div class="box box-info">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title">Interface {{ item }}</h3>
+                                    <div class="box-tools pull-right">
+                                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                    </div>
+                                    <!-- /.box-tools -->
+                                </div>
+                                <!-- /.box-header -->
+                                <div class="box-body">
+                                    <div id="iface_{{ item }} }}">
+                                        <label>Iface Type</label>
+                                        <select class="form-control" id="iface_type_{{ item }}">
+                                            {%  for if in NTYPE %}
+                                            <option value="{{ if.value }}">{{ if.name }}</option>
+                                            {%  endfor %}</select>
+                                        <label>Iface Driver</label>
+                                        <select class="form-control" id="iface_driver_{{ item }}r">
+                                            {%  for driver in DRIVERS %}
+                                            <option value="{{ driver }}">{{ driver }}</option>
+                                            {%  endfor %}</select>
+
+                                        </select>
+                                    </div>
+                                    <div id="net_attr" style="visibility: hidden;">
+                                        
+
+                                    </div>
+
+
+                                </div>
+                            <!-- /.box-body -->
+                             </div>
+                        {%  endfor %}
+                        {% csrf_token %}
+                        <input type="hidden" id="form_step" value="{{ STEP }}">
+                    </div>
+                    <!-- ./form group -->
+
+
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- /.box-body -->
+          </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="box box-info">
+                <div class="box-header with-border">
+                    <h3 class="box-title">New Virtual Machine (STEP 1/4)</h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div class="row">
+                        <div class="form-group">
+                            <label class="col-md-12">Please fullfill the following data:</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-2">
+                                <label for="vm_name">Name:</label>
+                            </div>
+                            <div class="col-md-4">
+                                <input class="form-control" type="text" id="vm_name" maxlength="30" value="" >
+                            </div>
+                            <div class="col-md-2">
+                                <label class="control-label" for="vh_name">Virtual Host:</label>
+                            </div>
+                            <div class="col-md-4">
+                                <input class="form-control" type="text"  id="vh_name" value="{{ VH.name }}"  readonly>
+                            </div>
+                        </div><!-- ./form group -->
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-2">
+                                <label class="control-label" for="vendor">Virtualization Type:</label>
+                            </div>
+                            <div class="col-md-4">
+                                <input class="form-control" type="text"  id="vendor" value="{{ VH.VType.vendor }}"  readonly>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="vm_ostype">Select OS Type:</label>
+                            </div>
+                            <div class="col-md-4">
+                                <select id="vm_ostype" aria-hidden="true" tabindex="-1" class="form-control select select2-hidden-accessible">
+                                    {% for item in OS %}
+                                    <option value="{{ item.id }}" >{{item.name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div><!-- ./form group -->
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-2">
+                                <label  for="vm_cpu">Number of CPU:</label>
+                            </div>
+                            <div class="col-md-4">
+                                <input class="form-control" type="number" min="1" id="vm_cpu" value="" >
+                            </div>
+                            <div class="col-md-2">
+                                <label  for="vm_mem">Memory (in MB):</label>
+                            </div>
+                            <div class="col-md-4">
+                                <input class="form-control" type="number" min="128" id="vm_mem" value="">
+                            </div>
+                        </div><!-- ./form group -->
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            {% csrf_token %}
+                            <input class="form-control" type="hidden" id="form_step" value="{{ STEP }}" readonly>
+                            <input class="form-control" type="hidden"  id="vm_vhost_id" value="{{ VH.id }}" readonly>
+                         </div><!-- ./form group -->
+                    </div>
+                </div><!-- .box-body -->
+                <div class="box-footer">
+                    <div class="row">
+                        <div class="col-md-8">
+                        </div>
+                        <div class="col-md-4">
+                            <span class="btn-group pull-right">
+                                <input type="button" id="reset_form" class="btn btn-danger" value="Reset">
+                                <input type="button" id="back_form" class="btn btn-warning" value="Back">
+                                <input type="button" id="cont_form" class="btn btn-primary" value="Continue">
+                            </span>
+                        </div>
+                    </div>
+                </div><!-- /.box-footer -->
+            </div><!-- .box -->

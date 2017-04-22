@@ -1,0 +1,84 @@
+{% extends 'console/base.html' %}
+
+
+{% block content%}
+
+<div class="content-wrapper">
+    <section class="content-header"></section>
+    <div class="row"></div>
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <div class="box box-info">
+                <div class="box-header with-border">
+                    <h3 class="box-title">New Virtual Machine (2/4)</h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div class="row">
+                        <div class="form-group">
+                            <label class="col-md-12"> In order to create the Virtual Disk please fullfill the following data:</label>
+                        </div>
+                    </div>
+                    <div class="row"></div>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-2">
+                                <label for"vm_datastore">Select a Datastore:</label>
+                            </div>
+                            <div class="col-md-4">
+                                <select id="vm_datastore" aria-hidden="true" tabindex="-1" class="form-control select select2-hidden-accessible">
+                                    {% for item in DSTORE %}
+                                    <option value="{{ item.id }}" >{{item.name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                 <label for"vm_dsk_sz">Disk Size (in MB):</label>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="number" min="0" id="vm_dsk_sz" class="form-control" value="" style="width: 30%;">
+                            </div>
+                        </div><!-- ./form group -->
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            {% csrf_token %}
+                            <input type="hidden" id="form_step" value="{{ STEP }}" readonly>
+                            <input type="hidden"  id="vm_vhost_id" value="{{ VH.id }}" readonly>
+                        </div><!-- ./form group -->
+                    </div>
+                </div><!-- .box-body -->
+                <div class="box-footer">
+                    <div class="row">
+                        <div class="col-md-8">
+                        </div>
+                        <div class="col-md-4">
+                            <span class="btn-group pull-right">
+                                <input type="button" id="reset_form" class="btn btn-danger" value="Reset">
+                                <input type="button" id="back_form" class="btn btn-warning" value="Back">
+                                <input type="button" id="cont_form" class="btn btn-primary" value="Continue">
+                            </span>
+                        </div>
+                    </div>
+                </div><!-- /.box-footer -->
+            </div><!-- .box -->
+
+        </div><!-- .col -->
+    </div><!-- .row -->
+</div><!-- .wrapper-->
+
+{% endblock content %}
+
+
+
+
+
+
+
+
+
+
+
+
+

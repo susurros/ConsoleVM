@@ -1,0 +1,130 @@
+{% extends 'console/base.html' %}
+
+{% block content%}
+
+<div class="content-wrapper">
+    <section class="content-header"></section>
+    <div class="row"></div>
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                  <h3 class="box-title">New Vitual Machine</h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                  <div class="box-group">
+                    <div class="row">
+                        <div class="col-md-12">
+                        <h4>Please fullfil the following Network data:</h4>
+                        </div>
+                    </div>
+                    <!-- we are adding the .panel class so bootstrap.js collapse plugin detects it -->
+                    </div>
+                    <div class="panel box box-primary">
+                        <div class="box-body">
+                            <div class="box-group" id="ifaces">
+                                {% for item in VMDATA.ifaces %}
+                                    {% if item.ntype == "intnet" %}
+                                    <div  class="panel box box-primary" id="iface_{{ item.num }}">
+                                        <div class="box-header with-border">
+                                            <h5 class="box-title">Interface {{ item.num }}</h5>
+                                        </div><!-- /.box-header -->
+                                        <div class="box-body">
+                                            <div class="form-group">
+                                                <div class="col-md-2">
+                                                    <label>Iface Type</label>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <input class="form-control" type="text"  value="{{ item.ntype }}"  readonly>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label>Iface Driver</label>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <input class="form-control" type="text"  value="{{ item.driver }}"  readonly>
+                                                </div>
+                                            </div><!-- .form-group -->
+                                            <div class="form-group">
+                                            <div class="col-md-2">
+                                                <label for="inet_type">Internal Network:</label>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <select class="form-control" id="inet_type">
+                                                    {% for net in INENET %}
+                                                    <option value="{{ net }}">{{ net }}</option>
+                                                    {% endfor%}
+                                                </select>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <input type="button" id="add_intnet" class="btn btn-success btn-xs pull-left" value="And Internal Network" >
+                                            </div>
+                                        </div><!-- .form-group -->
+                                        </div><!-- .box-body -->
+                                    </div>    <!-- .panel box -->
+                                    {% elif  item.ntype == "bridged"  %}
+                                    <div  class="panel box box-primary" id="iface_{{ item.num }}">
+                                        <div class="box-header with-border">
+                                            <h5 class="box-title">Interface {{ item.num }}</h5>
+                                        </div><!-- /.box-header -->
+                                        <div class="box-body">
+                                            <div class="form-group">
+                                                <div class="col-md-2">
+                                                    <label>Iface Type</label>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <input class="form-control" type="text"  value="{{ item.ntype }}"  readonly>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label>Iface Driver</label>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <input class="form-control" type="text"  value="{{ item.driver }}"  readonly>
+                                                </div>
+                                            </div><!-- .form-group -->
+                                            <div class="form-group">
+                                                <div class="col-md-2">
+                                                    <label for="inet_type">Bridged Interface:</label>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <select class="form-control" id="phy_iface">
+                                                        {% for phy in PHYIF %}
+                                                        <option value="{{ phy.name }}">{{ phy.name }}</option>
+                                                        {% endfor%}
+                                                    </select>
+                                                </div>
+                                            </div><!-- .form-group -->
+                                    </div><!-- /.box-body -->
+                                     </div><!-- .box-primary -->
+                                    {%  endif %}
+                                {% endfor %}
+                            </div><!-- .box-group -->
+                        </div><!-- .box-body -->
+                    </div>
+                  </div>
+                </div>
+            </div>
+                 <div class="box-footer">
+                    <div class="row">
+                        <div class="col-md-8">
+                        </div>
+                        <div class="col-md-4">
+                            <span class="btn-group pull-right">
+                                <input type="button" id="reset_form" class="btn btn-danger" value="Reset">
+                                <input type="button" id="back_form" class="btn btn-warning" value="Back">
+                                <input type="button" id="cont_form" class="btn btn-primary" value="Continue">
+                            </span>
+                        </div>
+                    </div>
+                </div><!-- /.box-footer -->
+            </div><!-- /.box -->
+        </div><!-- .col -->
+        <div class="col-md-2"></div>
+    </div><!-- .row -->
+</div><!-- .wrapper-->
+
+{% endblock content %}
+
+

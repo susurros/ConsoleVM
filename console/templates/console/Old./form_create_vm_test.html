@@ -1,0 +1,234 @@
+{% extends 'console/base.html' %}
+
+{% block content%}
+
+<div class="content-wrapper">
+    <section class="content-header"></section>
+    <div class="row"></div>
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                  <h3 class="box-title">New Vitual Machine</h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div class="box-group">
+                        <div class="row">
+                            <div class="col-md-12">
+                            <h4>Please fullfil the following data:</h4>
+                            </div>
+                        </div>
+                        <!-- we are adding the .panel class so bootstrap.js collapse plugin detects it -->
+                        <div class="panel box box-primary">
+                            <div class="box-header with-border">
+                                <h4 class="box-title">
+                                    General Data
+                                </h4>
+                            </div>
+                            <div class="box-body">
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-2">
+                                            <label for="vm_name">Name:</label>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input class="form-control" type="text" id="vm_name" maxlength="30" value="" >
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="control-label" for="vh_name">Virtual Host:</label>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input class="form-control" type="text"  id="vh_name" value="{{ VH.name }}"  readonly>
+                                        </div>
+                                    </div><!-- ./form group -->
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-2">
+                                            <label class="control-label" for="vendor">Virtualization Type:</label>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input class="form-control" type="text"  id="vendor" value="{{ VH.VType.vendor }}"  readonly>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label for="vm_ostype">Select OS Type:</label>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <select id="vm_ostype" aria-hidden="true" tabindex="-1" class="form-control select select2-hidden-accessible">
+                                                {% for item in OS %}
+                                                <option value="{{ item.id }}" >{{item.name}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div><!-- ./form group -->
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-2">
+                                            <label  for="vm_cpu">Number of CPU:</label>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input class="form-control" type="number" min="1" id="vm_cpu" value="" >
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label  for="vm_mem">Memory (in MB):</label>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input class="form-control" type="number" min="128" id="vm_mem" value="">
+                                        </div>
+                                    </div><!-- ./form group -->
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        {% csrf_token %}
+                                        <input class="form-control" type="hidden" id="form_step" value="{{ STEP }}" readonly>
+                                        <input class="form-control" type="hidden"  id="vm_vhost_id" value="{{ VH.id }}" readonly>
+                                     </div><!-- ./form group -->
+                                </div>
+                            </div><!-- .box-body -->
+                        </div>
+                        <div class="panel box box-primary">
+                            <div class="box-header with-border">
+                                <h4 class="box-title">Disk Data</h4>
+                            </div>
+                            <div class="box-body">
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-2">
+                                            <label for="vm_datastore">Select a Datastore:</label>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <select id="vm_datastore" aria-hidden="true" tabindex="-1" class="form-control select select2-hidden-accessible">
+                                                {% for item in DSTORE %}
+                                                <option value="{{ item.id }}" >{{item.name}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2">
+                                             <label for"vm_dsk_sz">Disk Size (in MB):</label>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input type="number" min="0" id="vm_dsk_sz" class="form-control" value="" style="width: 30%;">
+                                        </div>
+                                    </div><!-- ./form group -->
+                                </div>
+                        </div><!-- .box-body -->
+                        </div>
+                        <div class="panel box box-primary">
+                            <div class="box-header with-border">
+                                <h4 class="box-title">Network Data </h4>
+                            </div>
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <div class="col-md-2">
+                                        <label for="iface_type">Iface Type</label>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <select class="form-control" id="iface_type">
+                                            <option value="nat">Nat Network</option>
+                                            <option value="intnet">Internal Network</option>
+                                            <option value="bridged">Bridged Network</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label for="iface_driver">Iface Driver</label>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <select class="form-control" id="iface_driver">
+                                            <option value="Am79C970A">Am79C970A</option>
+                                            <option value="Am79C973">Am79C973</option>
+                                            <option value="82540EM">82540EM</option>
+                                            <option value="82543GC">82543GC</option>
+                                            <option value="82545EM">82545EM</option>
+                                        </select>
+                                    </div>
+                                </div><!-- ./form group -->
+                                <div class="form-group" id="intnet_form" style="display: none">
+                                    <div class="col-md-2">
+                                        <label for="intnet">Select Internal Network</label>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <select class="form-control" id="intnet">
+                                                <option value=" "></option>
+                                                <option value="new_int">New Internal Net</option>
+                                                {% for net in INTNET %}
+                                                    <option value="{{ net }}">{{ net }}</option>
+                                                {% endfor %}
+                                        </select>
+                                        <div id="intnet_set" class="modal">
+                                            <div class="col-md-3"></div>
+                                            <div class="col-md-6">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <span class="close">×</span>
+                                                        <h2>Add New Internal Network</h2>
+                                                    </div><!-- .modal-header-->
+                                                    <div class="modal-body">
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-4">
+                                                                    <label  for="new_net">New Network Name</label>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <input class="form-control" type="text"id="new_net" value="" >
+                                                                </div>
+                                                            </div><!-- ./form group -->
+                                                        </div><!-- .row -->
+                                                    </div><!-- .modal-body -->
+                                                    <div class="modal-footer">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                 <span class="btn-group pull-right">
+                                                                    <input type="button" id="close_modal_net" class="btn btn-danger" value="Close">
+                                                                    <input type="button" id="add_net_modal" class="btn btn-primary" value="Add Network">
+                                                                 </span>
+                                                            </div>
+                                                        </div>
+                                                    </div><!-- .modal-footer -->
+                                                </div><!-- .modal-content -->
+                                            </div>
+                                        </div><!-- .modal -->
+                                    </div>
+                                </div><!-- ./form group -->
+                                <div class="form-group" id="phy_form" style="display: none">
+                                    <div class="col-md-2">
+                                        <label for="Phy">Iface Driver</label>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div id="phy_set">
+                                            <select class="form-control" id="phy" >
+                                                {% for IF in IFACES %}
+                                                <option value="{{ IF.name }}">{{ IF.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div><!-- ./form group -->
+                            </div><!-- .box-body -->
+                        </div>
+                    </div><!-- .box-group-->
+                </div>
+                <div class="box-footer">
+                    <div class="row">
+                        <div class="col-md-8">
+                        </div>
+                        <div class="col-md-4">
+                            <span class="btn-group pull-right">
+                                <input type="button" id="reset_form" class="btn btn-danger" value="Reset">
+                                <input type="button" id="back_form" class="btn btn-warning" value="Back">
+                                <input type="button" id="cont_form" class="btn btn-primary" value="Continue">
+                            </span>
+                        </div>
+                    </div>
+                </div><!-- /.box-footer -->
+            </div><!-- /.box -->
+        </div><!-- .col -->
+        <div class="col-md-2"></div>
+    </div><!-- .row -->
+</div><!-- .wrapper-->
+
+{% endblock content %}
+
+

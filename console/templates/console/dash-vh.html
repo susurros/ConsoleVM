@@ -1,0 +1,219 @@
+{% extends 'console/base.html' %}
+
+
+{% block content%}
+
+  <!-- Console JS -->
+  <script src="/static/js/vh.js"></script>
+
+ <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        Virtual Hosts
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
+        <li class="active">Here</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+
+      <!-- Your Page Content Here -->
+      <div id="content-section">
+          {%  for vendor in vv %}
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                <h3 class="panel-title">{{vendor.name}}</h3>
+              </div>
+              <div class="panel-body">
+                 <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                          <th class="info">Name</th>
+                          <th class="info">IPaddr</th>
+                          <th class="info">Vir Type</th>
+                          <th class="info">CPU</th>
+                          <th class="info">Memory</th>
+                          <th class="info">Uptime</th>
+                          <th class="info">Actions</th>
+                        </tr>
+                     </thead>
+                    {% for vhost in vh %}
+                        {% if vhost.VType.name == vendor.name %}
+                           <tbody>
+                            <tr>
+                                <td width="10%>">{{vhost.name}}</td>
+                                <td width="10%">{{vhost.ipaddr}}</td>
+                                <td width="10%">{{vhost.VType}}</td>
+                                <td width="10%">{{vhost.cpu}}</td>
+                                <td width="10%">{{vhost.mem}}</td>
+                                <td width="15%">{{ vhost.uptime }}</td>
+                                <td width="20%">
+                                    <div class="btn-group-xs btn-group-lg" id="chg_button_{{ vhost.id }}">
+                                       {% csrf_token %}
+                                       <input type="hidden" id="vhname" value="{{vhost.name}}">
+                                       <input type="hidden" id="vhid" value="{{vhost.id}}">
+                                       <input type="button" id="shut_vh" class="btn btn-warning" value="Maintenance Shutdown">
+                                       <input type="button" id="modify_vh" class="btn bg-maroon" value="Modify">
+                                       <input type="button" id="delete_vh" class="btn btn-danger" value="Delete">
+                                   </div>
+
+
+                                 </td>
+                            </tr>
+                            </tbody>
+                       {% endif %}
+                    {%  endfor %}
+                </table>
+              </div>
+            </div>
+          {%  endfor %}
+      </div>
+
+      <!-- Modal -->
+      <div class="modal fade" id="md_msg" role="dialog">
+          <div class="modal-dialog">
+              <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h3 class="modal-title">Message</h3>
+                    </div><!-- .modal-header -->
+                    <div class="modal-body">
+                            <p id="info_msg"></p>
+                    </div><!-- .modal-body -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+                    </div><!-- .modal-footer -->
+              </div><!-- Modal content-->
+            </div><!-- .modal-dialog -->
+      </div><!-- .modal -->
+
+      <div class="modal fade" id="md_delete_vhost" role="dialog">
+          <div class="modal-dialog">
+              <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h3 class="modal-title">Warning: Virtual Host Deletion</h3>
+                    </div><!-- .modal-header -->
+                    <div class="modal-body">
+                            <p id="delete_msg"></p>
+                            <input type="hidden" id="del_vh" value="">
+                    </div><!-- .modal-body -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input type="button" id="btn_delete_vhost_ok" class="btn btn-danger" value="Delete">
+                    </div><!-- .modal-footer -->
+              </div><!-- Modal content-->
+            </div><!-- .modal-dialog -->
+      </div><!-- .modal -->
+      <div class="modal fade" id="md_vhots_form" role="dialog">
+          <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                  <div class="modal-body">
+                        <div class="box box-primary">
+                            <div class="box-header with-border">
+                                <h3 class="box-title"> Virtual Host</h3>
+                            </div><!-- .box-header -->
+                            <div class="box-body">
+                                <div class="box-group">
+                                    <div class="panel box box-primary">
+                                        <div class="box-header with-border">
+                                            <h4 class="box-title">General Data</h4>
+                                        </div><!-- .box-header -->
+                                        <div class="box-body">
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-2">
+                                                        <label for="id_name">Name</label>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <input class="form-control" id="id_name" maxlength="30" type="text" value="">
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <label for="id_VType">Vir. Type</label>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <input class="form-control" id="id_VType" maxlength="30" type="text" value="" readonly>
+                                                    </div>
+                                                </div><!-- .form-group -->
+                                            </div><!-- .row -->
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-2">
+                                                        <label for="id_ip">IP Address</label>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <input class="form-control" id="id_ip" type="text" value="">
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <label for="id_isopath">ISO Directory</label>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <input class="form-control" id="id_isopath" maxlength="30" type="text" value="">
+                                                    </div>
+                                                </div><!-- .form-group -->
+                                            </div><!-- .row -->
+                                        </div><!-- .box-body -->
+                                    </div><!-- /.panel box--->
+                                    <div class="panel box box-primary">
+                                        <div class="box-header with-border">
+                                            <h4 class="box-title">SSH Data</h4>
+                                        </div><!-- .box-header -->
+                                        <div class="box-body">
+                                             <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-2">
+                                                        <label for="id_user">SSH User</label>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <input class="form-control" id="id_user" maxlength="30" type="text" value="">
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <label for="id_sshkey">SSH Key</label>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <input class="form-control" id="id_sshkey" maxlength="30" type="text" value="">
+                                                    </div>
+                                                </div><!-- .form-group -->
+                                             </div><!-- .row -->
+                                             <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-2">
+                                                        <label for="id_sshport">SSH Port</label>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <input class="form-control" id="id_sshport" maxlength="30" type="number" value="">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" id="id_vhost" value="">
+                                                    </div>
+                                                </div><!-- .form-group -->
+                                             </div><!-- .row -->
+                                        </div><!-- .box-body -->
+                                    </div><!-- /.panel box--->
+                                </div><!-- .box-group -->
+                            </div><!-- .box-body -->
+                        </div><!-- /.box--->
+                  </div><!-- .modal-body -->
+                    <div class="modal-footer">
+                        <span class="btn-group pull-right">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <input type="button" id="btn_mod_vhost" class="btn btn-primary" value="Save">
+                        </span>
+                    </div><!-- .modal-footer -->
+              </div><!-- Modal content-->
+            </div><!-- .modal-dialog -->
+      </div><!-- .modal -->
+
+
+
+
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+{% endblock content %}

@@ -1,0 +1,12 @@
+001 ; Virtual Machine Started
+002 ; Virtual Machine Stoped
+003 ; Virtual Machine Paused
+004 ; Oracle VBOX's Virtual Machine Created
+005 : VmWare ESXi's Virtual Machine Created
+006 : Oracle Solaris Zone Installed
+007 ; Oracle VBOX's Virtual Machine Deleted
+008 : VmWare ESXi's Virtual Machine Deleted
+009 : Oracle Solaris Zone Installed
+007 ; Oracle VBOX's Virtual Machine Modified
+008 : VmWare ESXi's Virtual Machine Modified
+009 : Oracle Solaris Zone Modified

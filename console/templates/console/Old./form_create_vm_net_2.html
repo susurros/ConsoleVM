@@ -1,0 +1,60 @@
+{% extends 'console/base.html' %}
+
+{% block content%}
+
+<div class="content-wrapper">
+    <section class="content-header"></section>
+    <div class="row"></div>
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <div class="box box-info">
+                <div class="box-header with-border">
+                    <h3 class="box-title">New Virtual Machine (STEP 3/4)</h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-2">
+                                <label for="iface_num">Select the number of Interfaces:</label>
+                            </div>
+                            <div class="col-md-6">
+                                <select id="iface_num" aria-hidden="true" tabindex="-1" class="form-control select select2-hidden-accessible">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                            </div>
+                        </div><!-- ./form group -->
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group">
+                            {% csrf_token %}
+                            <input class="form-control" type="hidden" id="form_step" value="{{ STEP }}" readonly>
+                            <input class="form-control" type="hidden"  id="vm_vhost_id" value="{{ VH.id }}" readonly>
+                        </div><!-- ./form group -->
+                    </div>
+                </div><!-- .box-body -->
+                <div class="box-footer">
+                    <div class="row">
+                        <div class="col-md-8">
+                        </div>
+                        <div class="col-md-4">
+                            <span class="btn-group pull-right">
+                                <input type="button" id="reset_form" class="btn btn-danger" value="Reset">
+                                <input type="button" id="back_form" class="btn btn-warning" value="Back">
+                                <input type="button" id="cont_form" class="btn btn-primary" value="Continue">
+                            </span>
+                        </div>
+                    </div>
+                </div><!-- /.box-footer -->
+            </div><!-- .box -->
+
+
+        </div><!-- .col -->
+    </div><!-- .row -->
+</div><!-- .wrapper>
+
+{% endblock content %}

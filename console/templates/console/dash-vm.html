@@ -1,0 +1,427 @@
+{% extends 'console/base.html' %}
+
+
+{% block content%}
+  <script src="/static/js/vm.js"></script>
+
+ <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        Virtual Machines
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
+        <li class="active">Here</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+
+      <!-- Your Page Content Here -->
+      <div id="content-section">
+
+
+
+        <h2 class="panel-title" id="vm-panel"></h2>
+        {%  for vendor in vv %}
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <h3 class="panel-title">{{vendor.name}}</h3>
+          </div>
+          <div class="panel-body">
+             <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                      <th class="info">ID</th>
+                      <th class="info">VM Name</th>
+                      <th class="info">OS</th>
+                      <th class="info">Host Srv</th>
+                      <th class="info">Vir Type</th>
+                      <th class="info">Running</th>
+                      <th class="info">Uptime</th>
+                      <th class="info">Actions</th>
+                    </tr>
+                 </thead>
+                {% for machine in vm %}
+                   {% if machine.VHost.VType.name == vendor.name %}
+                        <tbody>
+                        <tr>
+                            <td width="15%">{{machine.vuuid}}</td>
+                            <td width="10%>">{{machine.name}}</td>
+                            <td width="10%">{{machine.OsType}}</td>
+                            <td width="10%">{{machine.VHost.name}}</td>
+                            <td width="10%">{{machine.VHost.VType.name}}</td>
+                            <td width="5%">
+                                {% if 'RN'  == machine.state %}
+                                    <i class="fa fa-2x fa-arrow-circle-up fa-fw text-success"></i>
+                                {%  elif 'PA' == machine.state %}
+                                    <i class="fa fa-2x fa-arrow-circle-right fa-fw text-warning"></i>
+                                {% else %}
+                                    <i class="fa fa-2x fa-arrow-circle-down fa-fw text-danger"></i>
+                                {% endif %}
+                            </td>
+                            <td width="10%">{{ machine.uptime }}</td>
+                            <td width="30%">
+
+                                <div class="btn-group btn-group-xs " id="ctrl_button_{{ machine.id }}">
+                                   {% csrf_token %}
+                                   <input type="hidden" id="vmid" name="vmid" value='{{machine.id}}'>
+                                   <input type="button" id="start_vm" class="btn btn-primary" value="Start">
+                                   {% if not machine.VHost.VType.vendor == "ZN" %}
+                                       {% if machine.state == "PA" %}
+                                   <input type="button" id="pause_vm" class="btn btn-info" value="Resume">
+                                       {% elif machine.state == "RN" %}
+                                   <input type="button" id="pause_vm" class="btn btn-info" value="Pause">
+                                        {% endif %}
+                                   {% endif %}
+                                   <input type="button" id="stop_vm" class="btn btn-warning" value="Stop">
+                                </div>
+
+                               <div class="btn-group btn-group-xs" id="chg_button_{{ machine.id }}">
+                                   {% csrf_token %}
+                                   <input type="hidden" id="vmid" name="vmid" value='{{machine.id}}'>
+                                   <input type="button" id="clone_vm" class="btn bg-olive" value="Clone">
+                                   <input type="button" id="modify_vm" class="btn bg-maroon" value="Modify">
+                                   <input type="button" id="delete_vm" class="btn btn-danger" value="Delete">
+                               </div>
+                               {% if not machine.VHost.VType.vendor == "ZN" %}
+                                <div class="btn-group btn-group-xs" id="snap_butons_{{ machine.id }}">
+                                   {% csrf_token %}
+                                   <input type="hidden" id="vmid" name="vmid" value='{{machine.id}}'>
+                                   <input type="button" id="mk_snap" class="btn bg-olive" value="New Snapshot">
+                                   <input type="button" id="mng_snap" class="btn bg-navy" value="Snapshot Manager">
+                                </div>
+                                {% endif %}
+                                <div class="btn-group btn-group-xs" id="console_{{ machine.id }}">
+                                    <input type="hidden" id="vmid" name="vmid" value='{{machine.id}}'>
+                                    <button id="btn_console" class="btn btn-info">
+                                        <span class="glyphicon glyphicon-console"></span>Console</a>
+                                    </button>
+                                </div>
+
+                             </td>
+                        </tr>
+                        </tbody>
+                   {% endif %}
+                {%  endfor %}
+            </table>
+
+        </div>
+    </div>
+        {%  endfor %}
+
+        <!-- Modal -->
+
+
+          <div class="modal fade" id="md_msg" role="dialog">
+              <div class="modal-dialog">
+                  <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h3 class="modal-title">Message</h3>
+                        </div><!-- .modal-header -->
+                        <div class="modal-body">
+                                <p id="info_msg"></p>
+                        </div><!-- .modal-body -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+                        </div><!-- .modal-footer -->
+                  </div><!-- Modal content-->
+                </div><!-- .modal-dialog -->
+          </div><!-- md_msg -->
+
+          <div class="modal fade" id="clone_modal" role="dialog">
+            <div class="modal-dialog">
+
+              <!-- Modal content-->
+                <div class="box box-primary">
+                        <div class="box-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h3 class="box-title">Clone VirtualMachine</h3>
+                        </div>
+                        <div class="box-body">
+                            <div class="row">
+                                <div class="form-group">
+                                    {% csrf_token %}
+                                    <div class="col-md-2">
+                                        <label for="clone_name">Name:</label>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input class="form-control" type="text" id="clone_name" value="">
+                                    </div>
+                                </div><!-- .form-group -->
+                            </div>
+                        </div><!-- .box-body -->
+                        <div class="box-footer">
+                            <input type="hidden" id="clone_vmid" value="">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <input type="button" id="clone_form" class="btn btn-primary" value="Clone">
+                        </div>
+
+                </div><!-- .box -->
+
+
+            </div><!-- .modal-dialog -->
+      </div><!-- Clone_modal -->
+
+          <div class="modal fade" id="Snap_modal" role="dialog">
+                <div class="modal-dialog">
+                    <div class="box box-primary">
+                        <div class="box-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h3 class="box-title"></h3>
+                        </div><!-- .box-heasder -->
+                        <div class="box-body">
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                      <th class="info">Name</th>
+                                      <th class="info">UUID</th>
+                                      <th class="info">Current</th>
+                                      <th class="info">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div><!-- .box-body -->
+                    </div><!-- .box-->
+                </div><!-- .modal-dialog-->
+
+
+
+
+
+         </div><!-- .Snap_create_modal -->
+
+          <div class="modal fade" id="VMmodify_modal" role="dialog">
+            <div class="modal-dialog">
+              <div class="box box-primary">
+                    <div class="box-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h3 class="box-title">Modify VirtualMachine</h3>
+                    </div>
+                    <div class="box-body">
+                      <div class="panel box box-primary">
+                        <div class="box-header with-border">
+                            <h4 class="box-title">General Data</h4>
+                        </div>
+                        <div class="box-body">
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-2">
+                                        <label for="mod_id_name">Name </label>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input class="form-control" id="mod_id_name" maxlength="30" name="name" type="text" value="">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label for="mod_id_vhost">Virtual Host</label>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input class="form-control" id="mod_id_vhost" maxlength="30" name="name" type="text" value="" readonly>
+                                    </div>
+                                </div><!-- .form-group -->
+                            </div><!-- .row -->
+                            <div class="row">
+                                <div class="form-group">
+                                     <div class="col-md-2">
+                                        <label for="mod_id_ostype">OS Type</label>
+                                     </div>
+                                     <div class="col-md-4">
+                                        <select class="form-control" id="mod_id_ostype">
+                                            <option value="0">- Select -</option>
+                                        </select>
+                                     </div>
+                                </div><!-- .form-group -->
+                            </div><!-- .row -->
+                            <div class="row">
+                                <div class="form-group">
+                                     <div class="col-md-2">
+                                        <label for="mod_id_cpu">CPU</label>
+                                     </div>
+                                     <div class="col-md-4">
+                                        <input class="form-control" id="mod_id_cpu" min="0" name="cpu" type="number">
+                                     </div>
+                                     <div class="col-md-2">
+                                        <label for="mod_id_mem">Memory</label>
+                                     </div>
+                                     <div class="col-md-4">
+                                        <input class="form-control" id="mod_id_mem" min="0" name="mem" type="number">
+                                     </div>
+                                </div><!-- .form-group -->
+                            </div><!-- .row -->
+                        </div><!-- .box body -->
+
+                      </div><!-- .panel General Data -->
+                      <div class="panel box box-primary">
+
+                        <div class="box-header with-border">
+
+                            <h4 class="box-title">Network Data</h4>
+
+                        </div>
+
+                        <div id="Net_Body" class="box-body">
+
+                            <div class="row">
+
+                                <div class="form-group">
+
+                                    <div class="col-md-2">
+
+                                        <label for="mod_id_vswitch">Networks</label>
+
+                                    </div>
+
+                                    <div class="col-md-4">
+
+                                        <select class="form-control" id="mod_id_vswitch">
+
+                                            <option value="0">- Select -</option>
+
+                                        </select>
+
+                                    </div>
+
+                                    <div class="col-md-2">
+
+                                        <label for="mod_id_driver">Driver</label>
+
+                                    </div>
+
+                                    <div class="col-md-4">
+
+                                        <select class="form-control" id="mod_id_driver">
+
+                                            <option value="0">- Select -</option>
+
+                                        </select>
+
+                                    </div>
+
+                                </div><!-- .form-group -->
+
+                            </div><!-- .row -->
+
+                        </div><!-- .box body -->
+
+                    </div><!-- .panel Network Data -->
+                      <div class="panel box box-primary">
+
+                        <div class="box-header with-border">
+
+                            <h4 class="box-title">
+
+                                Remote Administration Data
+
+                            </h4>
+
+                        </div>
+
+                        <div id="Remote_Body" class="box-body">
+
+                             <div class="row">
+
+                                <div class="form-group">
+
+                                    <div class="col-md-2">
+
+                                        <label for="mod_rdp_user">User:</label>
+
+                                    </div>
+
+                                    <div class="col-md-4">
+
+                                        <input class="form-control" type="text" id="mod_rdp_user" maxlength="30" value="" >
+
+                                    </div>
+
+                                    <div class="col-md-2">
+
+                                        <label class="control-label" for="mod_rdp_pass">Password:</label>
+
+                                    </div>
+
+                                    <div class="col-md-4">
+
+                                        <input class="form-control" type="text"  id="mod_rdp_pass" value="">
+
+                                    </div>
+
+                                </div><!-- ./form group -->
+
+                            </div>
+
+                            <div class="row">
+
+                                <div class="form-group">
+
+                                    <div class="col-md-2">
+
+                                        <label class="control-label" for="mod_rdp_port">Port</label>
+
+                                    </div>
+
+                                    <div class="col-md-4">
+
+                                        <input class="form-control" type="text"  id="mod_rdp_port" value="" >
+
+                                    </div>
+
+                                </div><!-- ./form group -->
+
+                            </div>
+
+                          </div><!-- .box-body -->
+
+                        </div><!-- Rdp Data -->
+                        <div id="Medium">
+                            <div class="panel box box-primary">
+                                <div class="box-header with-border">
+                                    <h4 class="box-title">
+                                        Medium Data
+                                    </h4>
+                                </div>
+                                <div class="box-body">
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-2">
+                                                <label for="image">Image:</label>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <select class="form-control" type="text" id="image"></select>
+                                            </div>
+                                        </div><!-- ./form group -->
+                                    </div><!-- .row -->
+                                </div><!-- .box-body -->
+                            </div><!-- Medium Data -->
+                        </div><!-- Medium  -->
+                    </div><!-- .box-body -->
+                    <div class="box-footer">
+                        <input type="hidden" id="mod_id_vmid" value="">
+                        <input type="hidden" id="mod_id_vhostid" value="">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input type="button" id="modify_form" class="btn btn-primary" value="Modify">
+                    </div>
+                </div><!-- .box -->
+
+            </div><!-- .modal-dialog -->
+
+          </div><!--   VMmodify_modal -->
+
+
+        </div><!-- #content-section -->
+
+
+
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+{% endblock content %}

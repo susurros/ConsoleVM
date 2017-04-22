@@ -1,0 +1,230 @@
+{% extends 'console/base.html' %}
+
+
+{% block content%}
+  <script src="/static/js/vm.js"></script>
+
+  <div class="content-wrapper">
+    <section class="content-header"></section>
+    <div class="row"></div>
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                      <h3 class="box-title">New Virtual Machine</h3>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body">
+                        <div class="box-group">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4>Please confirm the following data:</h4>
+                                </div>
+                            </div><!-- .row -->
+                            <div class="panel box box-primary">
+                                <div class="box-header with-border">
+                                    <h4 class="box-title">General Data</h4>
+                                </div>
+                                <div class="box-body">
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-2">
+                                                <label for="id_name">Name </label>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <input class="form-control" id="id_name" maxlength="30" name="name" type="text">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label for="id_vhost">Virtual Host</label>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <select class="form-control" id="id_VHost">
+                                                    <option value="0" selected >- Select -</option>
+                                                    {% for host in VH %}
+                                                    <option value="{{ host.id }}">{{ host.name }}</option>
+                                                    {%  endfor %}
+                                                </select>
+                                            </div>
+                                        </div><!-- .form-group -->
+                                    </div><!-- .row -->
+                                    <div class="row">
+                                        <div class="form-group">
+                                             <div class="col-md-2">
+                                                <label for="id_ostype">OS Type</label>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <select class="form-control" id="id_ostype">
+                                                    <option value="0">- Select -</option>
+                                                </select>
+                                            </div>
+                                        </div><!-- .form-group -->
+                                    </div><!-- .row -->
+                                    <div class="row">
+                                        <div class="form-group">
+                                             <div class="col-md-2">
+                                                <label for="id_cpu">CPU</label>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <input class="form-control" id="id_cpu" min="0" name="cpu" type="number">                                            </div>
+                                            <div class="col-md-2">
+                                                <label for="id_mem">Memory</label>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <input class="form-control" id="id_mem" min="0" name="mem" type="number">                                            </div>
+                                            </div><!-- .form-group -->
+                                    </div><!-- .row -->
+                                </div><!-- .box body -->
+                            </div><!-- .panel General Data -->
+                            <div class="panel box box-primary">
+                                <div class="box-header with-border">
+                                    <h4 class="box-title">Storage Data</h4>
+                                </div>
+                                <div class="box-body">
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-2">
+                                                <label for="id_datastore">Datastore</label>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <select class="form-control" id="id_datastore">
+                                                    <option value="0">- Select -</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label for="id_size">Disk Size</label>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <input class="form-control" id="id_size" min="0" name="dsize" type="number">                                            </div>
+                                        </div><!-- .form-group -->
+                                    </div><!-- .row -->
+                                </div><!-- .box body -->
+                            </div><!-- .panel Storage Data -->
+                            <div class="panel box box-primary">
+                                <div class="box-header with-border">
+                                    <h4 class="box-title">Network Data</h4>
+                                </div>
+                                <div id="Net_Body" class="box-body">
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-2">
+                                                <label for="id_vswitch">Networks</label>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <select class="form-control" id="id_vswitch">
+                                                    <option value="0">- Select -</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label for="id_driver">Driver</label>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <select class="form-control" id="id_driver">
+                                                    <option value="0">- Select -</option>
+                                                </select>
+                                            </div>
+                                        </div><!-- .form-group -->
+                                    </div><!-- .row -->
+                                </div><!-- .box body -->
+                            </div><!-- .panel Network Data -->
+                            <div class="panel box box-primary">
+                                <div class="box-header with-border">
+                                    <h4 class="box-title">
+                                        Remote Administration Data
+                                    </h4>
+                                </div>
+                                <div id="Remote_body" class="box-body">
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-2">
+                                                <label for="rdp_user">User:</label>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <input class="form-control" type="text" id="rdp_user" maxlength="30" value="" >
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="control-label" for="rdp_pass">Password:</label>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <input class="form-control" type="text"  id="rdp_pass" value="">
+                                            </div>
+                                        </div><!-- ./form group -->
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-2">
+                                                <label class="control-label" for="rdp_port">Port</label>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <input class="form-control" type="text"  id="rdp_port" value="" >
+                                            </div>
+                                        </div><!-- ./form group -->
+                                    </div>
+                                </div><!-- .box-body -->
+                            </div><!-- Rdp Data -->
+                            <div id="Medium">
+                            <div class="panel box box-primary">
+                                <div class="box-header with-border">
+                                    <h4 class="box-title">
+                                        Medium Data
+                                    </h4>
+                                </div>
+                                <div class="box-body">
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-2">
+                                                <label for="image">Image:</label>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <select class="form-control" type="text" id="image"></select>
+                                            </div>
+                                        </div><!-- ./form group -->
+                                    </div><!-- .row -->
+                                </div><!-- .box-body -->
+                            </div><!-- Medium Data -->
+                            </div><!-- Medium  -->
+                        </div><!-- .box-group-->
+                    </div><!-- .box-body-->
+                    <div class="box-footer">
+                        <div class="row">
+                            <div class="col-md-8">
+                            </div>
+                            <div class="col-md-4">
+                                <span class="btn-group pull-right">
+                                    <input type="button" id="btn_create_vm" class="btn btn-primary" value="Create">
+                                </span>
+                            </div>
+                        </div>
+                    </div><!-- /.box-footer -->
+                </div><!-- /.box -->
+
+            {% csrf_token %}
+
+            </div><!-- .col -->
+            <div class="col-md-2"></div>
+        </div><!-- .row -->
+  </div><!-- .wrapper-->
+  <!-- Modal -->
+  <div class="modal fade" id="md_msg_form" role="dialog">
+      <div class="modal-dialog">
+          <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h3 class="modal-title">Message</h3>
+                </div><!-- .modal-header -->
+                <div class="modal-body">
+                        <p id="info_msg"></p>
+                </div><!-- .modal-body -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+                </div><!-- .modal-footer -->
+          </div><!-- Modal content-->
+        </div><!-- .modal-dialog -->
+  </div><!-- .modal -->
+
+
+
+
+
+
+{% endblock content %}

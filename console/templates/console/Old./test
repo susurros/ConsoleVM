@@ -1,0 +1,53 @@
+$('input[id^="btn_modify_network"]').click(function(e){
+        e.preventDefault();
+
+
+        var pdiv = $(this).parent().attr('id');
+        var vsw_name = $("#"+ pdiv + "> #vsw_name").val();
+        var vsw_id = $("#"+ pdiv + "> #vsw_id").val();
+        var vsw_type = $("#" + pdiv + "> #vsw_type").val();
+        var vh_name = $("#" + pdiv + "> #vh_name").val();
+        var vh_id = $("#" + pdiv + "> #vh_id").val();
+        var vh_vendor = $("#" + pdiv + "> #vh_vendor").val();
+
+        $("#Net_Panel").hide()
+
+        var data = {"vhostid":  vh_id}
+
+
+        if (vh_vendor == "VW"){
+            $.ajax({
+                "url": "/ajax/net_update_query/",
+                "type": "POST",
+                "data": data,
+                "dataType": 'json',
+                "success":function(data) {
+                    var vendor = data.vendor;
+                    if (vendor == "VW") {
+                        var type = JSON.parse(data.vswlist);
+                        $("#np_title").text("VmWare Network Data");
+                        $("#id_NType").empty();
+                        for (key in type) {
+                            if (vsw_name == type[key].vswitch) {
+                                $("#id_NType").append("<option selected='selected' value='" + type[key].vswitch + "'>" + type[key].vswitch + "</option>");
+                            } else {
+                                $("#id_NType").append("<option value='" + type[key].vswitch + "'>" + type[key].vswitch + "</option>");
+                            }
+                        }
+                        $("#Net_Panel").show()
+                    }
+                }
+            });
+        }else {
+            $("#id_NType").empty();
+            $("#id_NType").append("<option value='" + vsw_id + "'>" + vsw_name + "</option>");
+
+        }
+
+        $("#id_name").attr('value',vsw_name)
+        $("#id_VHost").append("<option value='" + vh_id + "'>" + vh_name + "</option>");
+        $("#md_net_form").modal();
+
+    });
+
+

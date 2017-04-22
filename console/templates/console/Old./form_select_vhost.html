@@ -1,0 +1,50 @@
+{% extends 'console/base.html' %}
+
+
+{% block content%}
+
+ <div class="content-wrapper">
+    <section class="content-header"></section>
+    <div class="row"></div>
+    <div class="row">
+
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+
+            <div class="box box-info">
+                <div class="box-header with-border">
+                    <h3 class="box-title">New Virtual Machine</h3>
+                </div>                <!-- /.box-header -->
+                <div class="box-body">
+                    <div class="form-group">
+                        <label>Please select the VirtualHost in where is going to be created the new Virtual Machine</label>
+
+                        <select id="vhost_select" aria-hidden="true" tabindex="-1" class="form-control select select2-hidden-accessible"  style="width: 100%;">
+                            {% for item in VH %}
+                                <option value="{{ item.id }}" >{{item.name}}</option>
+                            {% endfor %}
+                        </select>
+                        {% csrf_token %}
+
+
+                    </div>
+                </div>                <!-- /.box-body -->
+
+                <div class="box-footer">
+                    <span class="btn-group pull-right">
+                        <input type="button" id="cont_form" class="btn btn-primary" value="Continue">
+                    </span>
+                </div>
+                <!-- /.box-footer -->
+            </div>
+            <!-- /.box -->
+
+
+        <div class="col-md-3"></div>
+    </div>
+    <!-- /.row -->
+ </div>
+ </div><!-- .content-wrapper -->
+
+
+{% endblock content %}

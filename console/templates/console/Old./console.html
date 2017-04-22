@@ -1,0 +1,396 @@
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script type="text/javascript" src="http://netdna.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="http://pingendo.github.io/pingendo-bootstrap/themes/default/bootstrap.css" rel="stylesheet" type="text/css">
+  </head><body>
+    <div class="section">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-2">
+            <ul class="nav nav-pills nav-stacked">
+              <li class="disabled">
+                <a href="#">Hosts</a>
+              </li>
+              <li class="active">
+                <a href="#">Virtual Machines</a>
+              </li>
+              <li>
+                <a href="#">Users</a>
+              </li>
+            </ul>
+          </div>
+          <div class="col-md-10">
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                <h3 class="panel-title" id="vbox-panel">Virtuall Machines</h3>
+              </div>
+              <div class="panel-body">
+                <table class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                      <th class="info">ID</th>
+                      <th class="info">VM Name</th>
+                      <th class="info">OS</th>
+                      <th class="info">Vir Type</th>
+                      <th class="info">Running</th>
+                      <th class="info">Uptime</th>
+                      <th class="info">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>1</td>
+                      <td>Apache Webserver</td>
+                      <td>Debian 8</td>
+                      <td>Vbox</td>
+                      <td>
+                        <img src=" " class="center-block img-rounded">
+                      </td>
+                      <td>up 1 day, 6 hours, 58 minutes</td>
+                      <td>
+                        <div class="btn-group btn-group-lg">
+                          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown"> Dropdown <span class="fa fa-caret-down"></span></a>
+                          <ul class="dropdown-menu" role="menu">
+                            <li>
+                              <a href="#">StartVM</a>
+                            </li>
+                            <li>
+                              <a href="#">StopVM</a>
+                            </li>
+                            <li>
+                              <a href="#">PauseVM</a>
+                            </li>
+                            <li>
+                              <a href="#">Snapshot</a>
+                            </li>
+                            <li>
+                              <a href="#">Recover Snapshot</a>
+                            </li>
+                            <li>
+                              <a href="#">ModifyVM</a>
+                            </li>
+                            <li>
+                              <a href="#">DeleteVM</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>2</td>
+                      <td>Database Oracle</td>
+                      <td>Redhat ES</td>
+                      <td>VMware</td>
+                      <td>
+                        <img src=" " class="center-block img-rounded">
+                      </td>
+                      <td>up 123 day, 6 hours, 58 minutes</td>
+                      <td>
+                        <div class="btn-group btn-group-lg">
+                          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown"> Dropdown <span class="fa fa-caret-down"></span></a>
+                          <ul class="dropdown-menu" role="menu">
+                            <li>
+                              <a href="#">StartVM</a>
+                            </li>
+                            <li>
+                              <a href="#">StopVM</a>
+                            </li>
+                            <li>
+                              <a href="#">PauseVM</a>
+                            </li>
+                            <li>
+                              <a href="#">Snapshot</a>
+                            </li>
+                            <li>
+                              <a href="#">Recover Snapshot</a>
+                            </li>
+                            <li>
+                              <a href="#">ModifyVM</a>
+                            </li>
+                            <li>
+                              <a href="#">DeleteVM</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>3</td>
+                      <td>Firewall</td>
+                      <td>Linux 2.6</td>
+                      <td>Vbox</td>
+                      <td>
+                        <img src=" " class="center-block img-rounded">
+                      </td>
+                      <td>up 23 day, 6 hours, 58 minutes</td>
+                      <td>
+                        <div class="btn-group btn-group-lg">
+                          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown"> Dropdown <span class="fa fa-caret-down"></span></a>
+                          <ul class="dropdown-menu" role="menu">
+                            <li>
+                              <a href="#">StartVM</a>
+                            </li>
+                            <li>
+                              <a href="#">StopVM</a>
+                            </li>
+                            <li>
+                              <a href="#">PauseVM</a>
+                            </li>
+                            <li>
+                              <a href="#">Snapshot</a>
+                            </li>
+                            <li>
+                              <a href="#">Recover Snapshot</a>
+                            </li>
+                            <li>
+                              <a href="#">ModifyVM</a>
+                            </li>
+                            <li>
+                              <a href="#">DeleteVM</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>4</td>
+                      <td>Developer Windows</td>
+                      <td>Windows 10</td>
+                      <td>VMware</td>
+                      <td>
+                        <img src=" " class="center-block img-rounded">
+                      </td>
+                      <td>up 15 day, 6 hours, 58 minutes</td>
+                      <td>
+                        <div class="btn-group btn-group-lg">
+                          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown"> Dropdown <span class="fa fa-caret-down"></span></a>
+                          <ul class="dropdown-menu" role="menu">
+                            <li>
+                              <a href="#">StartVM</a>
+                            </li>
+                            <li>
+                              <a href="#">StopVM</a>
+                            </li>
+                            <li>
+                              <a href="#">PauseVM</a>
+                            </li>
+                            <li>
+                              <a href="#">Snapshot</a>
+                            </li>
+                            <li>
+                              <a href="#">Recover Snapshot</a>
+                            </li>
+                            <li>
+                              <a href="#">ModifyVM</a>
+                            </li>
+                            <li>
+                              <a href="#">DeleteVM</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>5</td>
+                      <td>Weblogic Server</td>
+                      <td>Solaris 8</td>
+                      <td>Solaris Zones</td>
+                      <td>
+                        <img src=" " class="center-block img-rounded">
+                      </td>
+                      <td>up 2 day, 4 hours, 58 minutes</td>
+                      <td>
+                        <div class="btn-group btn-group-lg">
+                          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown"> Dropdown <span class="fa fa-caret-down"></span></a>
+                          <ul class="dropdown-menu" role="menu">
+                            <li>
+                              <a href="#">StartVM</a>
+                            </li>
+                            <li>
+                              <a href="#">StopVM</a>
+                            </li>
+                            <li>
+                              <a href="#">PauseVM</a>
+                            </li>
+                            <li>
+                              <a href="#">Snapshot</a>
+                            </li>
+                            <li>
+                              <a href="#">Recover Snapshot</a>
+                            </li>
+                            <li>
+                              <a href="#">ModifyVM</a>
+                            </li>
+                            <li>
+                              <a href="#">DeleteVM</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>6</td>
+                      <td>Database Oracle 12g R2</td>
+                      <td>Solaris 11</td>
+                      <td>Solaris Zones</td>
+                      <td>
+                        <img src=" " class="center-block img-rounded">
+                      </td>
+                      <td>up 14 day, 6 hours, 58 minutes</td>
+                      <td>
+                        <div class="btn-group btn-group-lg">
+                          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown"> Dropdown <span class="fa fa-caret-down"></span></a>
+                          <ul class="dropdown-menu" role="menu">
+                            <li>
+                              <a href="#">StartVM</a>
+                            </li>
+                            <li>
+                              <a href="#">StopVM</a>
+                            </li>
+                            <li>
+                              <a href="#">PauseVM</a>
+                            </li>
+                            <li>
+                              <a href="#">Snapshot</a>
+                            </li>
+                            <li>
+                              <a href="#">Recover Snapshot</a>
+                            </li>
+                            <li>
+                              <a href="#">ModifyVM</a>
+                            </li>
+                            <li>
+                              <a href="#">DeleteVM</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>7</td>
+                      <td>ISS WebServer</td>
+                      <td>Windows 2008</td>
+                      <td>Vbox</td>
+                      <td>
+                        <img src=" " class="center-block img-rounded">
+                      </td>
+                      <td>up 7 hours, 58 minutes</td>
+                      <td>
+                        <div class="btn-group btn-group-lg">
+                          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown"> Dropdown <span class="fa fa-caret-down"></span></a>
+                          <ul class="dropdown-menu" role="menu">
+                            <li>
+                              <a href="#">StartVM</a>
+                            </li>
+                            <li>
+                              <a href="#">StopVM</a>
+                            </li>
+                            <li>
+                              <a href="#">PauseVM</a>
+                            </li>
+                            <li>
+                              <a href="#">Snapshot</a>
+                            </li>
+                            <li>
+                              <a href="#">Recover Snapshot</a>
+                            </li>
+                            <li>
+                              <a href="#">ModifyVM</a>
+                            </li>
+                            <li>
+                              <a href="#">DeleteVM</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>8</td>
+                      <td>Desing</td>
+                      <td>ubintu 64bits</td>
+                      <td>ESXi</td>
+                      <td>
+                        <img src=" " class="center-block img-rounded">
+                      </td>
+                      <td draggable="true">up 12 minutes</td>
+                      <td>
+                        <div class="btn-group btn-group-lg">
+                          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown"> Dropdown <span class="fa fa-caret-down"></span></a>
+                          <ul class="dropdown-menu" role="menu">
+                            <li>
+                              <a href="#">StartVM</a>
+                            </li>
+                            <li>
+                              <a href="#">StopVM</a>
+                            </li>
+                            <li>
+                              <a href="#">PauseVM</a>
+                            </li>
+                            <li>
+                              <a href="#">Snapshot</a>
+                            </li>
+                            <li>
+                              <a href="#">Recover Snapshot</a>
+                            </li>
+                            <li>
+                              <a href="#">ModifyVM</a>
+                            </li>
+                            <li>
+                              <a href="#">DeleteVM</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>9</td>
+                      <td>Web FrrontEnd</td>
+                      <td>Debian 8</td>
+                      <td>Vbox</td>
+                      <td>
+                        <img src=" " class="center-block img-rounded">
+                      </td>
+                      <td>up 1 day, 6 hours, 58 minutes</td>
+                      <td>
+                        <div class="btn-group btn-group-lg">
+                          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown"> Dropdown <span class="fa fa-caret-down"></span></a>
+                          <ul class="dropdown-menu" role="menu">
+                            <li>
+                              <a href="#">StartVM</a>
+                            </li>
+                            <li>
+                              <a href="#">StopVM</a>
+                            </li>
+                            <li>
+                              <a href="#">PauseVM</a>
+                            </li>
+                            <li>
+                              <a href="#">Snapshot</a>
+                            </li>
+                            <li>
+                              <a href="#">Recover Snapshot</a>
+                            </li>
+                            <li>
+                              <a href="#">ModifyVM</a>
+                            </li>
+                            <li>
+                              <a href="#">DeleteVM</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+</body></html>

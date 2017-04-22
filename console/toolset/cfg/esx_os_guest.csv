@@ -1,0 +1,119 @@
+asianux3-64 ; Asianux Server 3 (64 bit)  
+asianux3 ; Asianux Server 3    
+asianux4-64 ; Asianux Server 4 (64 bit)  
+asianux4 ; Asianux Server 4    
+asianux5-64 ; Asianux Server 5 (64 bit)  
+centos-64 ; CentOS 4/5 (64-bit)    
+centos ; CentOS 4/5     
+coreos-64 ; CoreOS Linux (64 bit)   
+darwin10-64 ; Mac OS 10.6 (64 bit)  
+darwin10 ; Mac OS 10.6    
+darwin11-64 ; Mac OS 10.7 (64 bit)  
+darwin11 ; Mac OS 10.7    
+darwin12-64 ; Mac OS 10.8 (64 bit)  
+darwin13-64 ; Mac OS 10.9 (64 bit)  
+darwin14-64 ; Mac OS 10.10 (64 bit)  
+darwin-64 ; Mac OS 10.5 (64 bit)  
+darwin ; Mac OS 10.5    
+debian4-64 ; Debian GNU/Linux 4 (64 bit)  
+debian4 ; Debian GNU/Linux 4    
+debian5-64 ; Debian GNU/Linux 5 (64 bit)  
+debian5 ; Debian GNU/Linux 5    
+debian6-64 ; Debian GNU/Linux 6 (64 bit)  
+debian6 ; Debian GNU/Linux 6    
+debian7-64 ; Debian GNU/Linux 7 (64 bit)  
+debian7 ; Debian GNU/Linux 7    
+debian8-64 ; Debian GNU/Linux 8 (64 bit)  
+debian8 ; Debian GNU/Linux 8    
+dos ; MS-DOS.      
+eComStation2 ; eComStation 2.0     
+eComStation ; eComStation 1.x     
+fedora-64 ; Fedora Linux (64 bit)   
+fedora ; Fedora Linux     
+freebsd-64 ; FreeBSD x64     
+freebsd ; FreeBSD      
+mandriva-64 ; Mandriva Linux (64 bit)
+openServer5 ; SCO OpenServer 5
+openServer6 ; SCO OpenServer 6    
+opensuse-64 ; OpenSUSE Linux (64 bit)   
+opensuse ; OpenSUSE Linux     
+oracleLinux-64 ; Oracle Linux 4/5 (64-bit)   
+oracleLinux ; Oracle Linux 4/5    
+os2 ; OS/2
+other24xLinux ; Linux 2.4x Kernel
+other26xLinux ; Linux 2.6x Kernel    
+other3xLinux-64 ; Linux 3.x Kernel (64 bit)  
+other3xLinux ; Linux 3.x Kernel    
+other ; Other Operating System
+otherLinux ; Linux 2.2x Kernel    
+redhat ; Red Hat Linux 2.1   
+rhel2 ; Red Hat Enterprise Linux 2  
+rhel3-64 ; Red Hat Enterprise Linux 3 (64 bit)
+rhel3 ; Red Hat Enterprise Linux 3  
+rhel4-64 ; Red Hat Enterprise Linux 4 (64 bit)
+rhel4 ; Red Hat Enterprise Linux 4  
+rhel5-64 ; Red Hat Enterprise Linux 5 (64 bit)
+rhel5 ; Red Hat Enterprise Linux 5  
+rhel6-64 ; Red Hat Enterprise Linux 6 (64 bit)
+rhel6 ; Red Hat Enterprise Linux 6  
+rhel7-64 ; Red Hat Enterprise Linux 7 (64 bit)
+rhel7 ; Red Hat Enterprise Linux 7  
+sjds ; Sun Java Desktop System   
+sles10-64 ; Suse Linux Enterprise Server 10 (64 bit)
+sles10 ; Suse linux Enterprise Server 10  
+sles11-64 ; Suse Linux Enterprise Server 11 (64 bit)
+sles11 ; Suse linux Enterprise Server 11  
+sles12-64 ; Suse Linux Enterprise Server 12 (64 bit)
+sles12 ; Suse linux Enterprise Server 12  
+sles-64 ; Suse Linux Enterprise Server 9 (64 bit)
+sles ; Suse Linux Enterprise Server 9  
+solaris10-64 ; Solaris 10 (64 bit) (experimental)  
+solaris10 ; Solaris 10 (32 bit) (experimental)  
+solaris11-64 ; Solaris 11 (64 bit)   
+solaris6 ; Solaris 6     
+solaris7 ; Solaris 7     
+solaris8 ; Solaris 8     
+solaris9 ; Solaris 9     
+suse-64 ; Suse Linux (64 bit)   
+suse ; Suse Linux     
+turboLinux-64 ; Turbolinux (64 bit)    
+turboLinux ; Turbolinux      
+ubuntu-64 ; Ubuntu Linux (64 bit)   
+ubuntu ; Ubuntu Linux     
+unixWare7 ; SCO UnixWare 7    
+vmkernel5 ; VMware ESX 5    
+vmkernel6 ; VMware ESX 6    
+vmkernel ; VMware ESX 4    
+win2000AdvServ ; Windows 2000 Advanced Server   
+win2000Pro ; Windows 2000 Professional    
+win2000Serv ; Windows 2000 Server    
+win31 ; Windows 3.1     
+win95 ; Windows 95     
+win98 ; Windows 98     
+windows7-64 ; Windows 7 (64 bit)   
+windows7 ; Windows 7     
+windows7Server-64 ; Windows Server 2008 R2 (64 bit) 
+windows8-64 ; Windows 8 (64 bit)   
+windows8 ; Windows 8     
+windows8Server-64 ; Windows 8 Server (64 bit)  
+windows9-64 ; Windows 9 (64 bit)   
+windows9 ; Windows 9     
+windows9Server-64 ; Windows 9 Server (64 bit)  
+windowsHyperV ; Windows Hyper-V     
+winLonghorn-64 ; Windows Longhorn (64 bit) (experimental)  
+winLonghorn ; Windows Longhorn (experimental)    
+winMe ; Windows Millenium Edition    
+winNetBusiness ; Windows Small Business Server 2003  
+winNetDatacenter-64 ; Windows Server 2003, Datacenter Edition (64 bit)
+winNetDatacenter ; Windows Server 2003, Datacenter Edition  
+winNetEnterprise-64 ; Windows Server 2003, Enterprise Edition (64 bit)
+winNetEnterprise ; Windows Server 2003, Enterprise Edition  
+winNetStandard-64 ; Windows Server 2003, Standard Edition (64 bit)
+winNetStandard ; Windows Server 2003, Standard Edition  
+winNetWeb ; Windows Server 2003, Web Edition  
+winNT ; Windows NT 4    
+winVista-64 ; Windows Vista (64 bit)   
+winVista ; Windows Vista     
+winXPHome ; Windows XP Home Edition   
+winXPPro-64 ; Windows XP Professional Edition (64 bit) 
+winXPPro ; Windows XP Professional    
