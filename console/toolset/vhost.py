@@ -245,7 +245,6 @@ def update_model(option, **kwargs):  # Mirar como acturalizar
                         vmachine.mem = vbox_info(option="vm_mem", vhost=item, vmname=vmname)
                         vmachine.rdport = vbox_info(option="vm_rdport", vhost=item, vmname=vmname)
                         vmachine.state = vbox_info(option="vm_state", vhost=item, vmname=vmname)
-                        vmachine.uptime = vbox_info(option="vm_uptime", vhost=item, vmname=vmname)
                         vmachine.VSwitch = vsw
                         vmachine.save()
 
@@ -310,7 +309,6 @@ def update_model(option, **kwargs):  # Mirar como acturalizar
                         vmachine.mem = esx_info(option="vm_mem", vhost=item, vuuid=vuuid)
                         vmachine.rdport = esx_info(option="vm_rdport", vhost=item, vuuid=vuuid)
                         vmachine.state = esx_info(option="vm_state", vhost=item, vuuid=vuuid)
-                        vmachine.uptime = esx_info(option="vm_uptime", vhost=item, vuuid=vuuid)
                         vmachine.VSwitch = vsw
                         vmachine.save()
 
@@ -380,7 +378,6 @@ def update_model(option, **kwargs):  # Mirar como acturalizar
                         vmachine.mem = zone_info(option="vm_mem", vhost=item, vmname=vmname)
                         vmachine.rdport = zone_info(option="vm_rdport", vhost=item, vmname=vmname)
                         vmachine.state = zone_info(option="vm_state", vhost=item, vmname=vmname)
-                        vmachine.uptime = zone_info(option="vm_uptime", vhost=item, vmname=vmname)
                         vmachine.VSwitch = vsw
                         vmachine.save()
 
@@ -603,7 +600,6 @@ def update_model(option, **kwargs):  # Mirar como acturalizar
                     for vmachine in list_machines:
 
                         vmachine.state = vbox_info(option="vm_state", vhost=item, vmname=vmachine.name)
-                        vmachine.uptime = vbox_info(option="vm_uptime", vhost=item, vmname=vmachine.name)
                         vmachine.save()
 
             elif item.VType.vendor == "VW":
@@ -615,7 +611,6 @@ def update_model(option, **kwargs):  # Mirar como acturalizar
 
                         print ("Machine,state,id",vmachine,esx_info(option="vm_state", vhost=item, vuuid=vmachine.vuuid),vmachine.vuuid)
                         vmachine.state = esx_info(option="vm_state", vhost=item, vuuid=vmachine.vuuid)
-                        vmachine.uptime = esx_info(option="vm_uptime", vhost=item, vuuid=vmachine.vuuid)
 
                         vmachine.save()
 
@@ -626,7 +621,6 @@ def update_model(option, **kwargs):  # Mirar como acturalizar
 
                     for vmachine in list_machines:
                         vmachine.state = zone_info(option="vm_state", vhost=item, vmname=vmachine.name)
-                        vmachine.uptime = zone_info(option="vm_uptime", vhost=item, vmname=vmachine.name)
                         vmachine.save()
 
     elif option == "snap_shot":

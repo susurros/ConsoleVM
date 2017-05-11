@@ -1026,7 +1026,7 @@ def updatedb(request):
     if request.is_ajax() and request.POST:
         up_type = escape(request.POST.get('type'))
 
-        if up_type == "vmachines":
+        if up_type == "vmachine":
             update_model(option="ostypes")
             update_model(option="ifaces")
             update_model(option="datastores")

@@ -666,7 +666,8 @@ $(document).ready(function(){
                 "url": "/ajax/updatedb/",
                 "data": data,
                 success: function() {
-                     window.location.reload(true);
+                        $("#info_msg").text(data.msg);
+                        $("#md_msg").modal();
                 },
                 error: function(){
                     alert("Error detected");
