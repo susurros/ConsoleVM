@@ -653,7 +653,7 @@ $(document).ready(function(){
 
 
     //Referesh
-      $("#btn_update").on('click',function (e) {
+    $("#btn_update").on('click',function (e) {
         e.preventDefault();
 
         var data = {
@@ -665,9 +665,10 @@ $(document).ready(function(){
                 "dataType": "json",
                 "url": "/ajax/updatedb/",
                 "data": data,
-                success: function() {
-                        $("#info_msg").text(data.msg);
-                        $("#md_msg").modal();
+                success: function(data) {
+                    console.log(data.msg)
+                    $("#info_msg").text(data.msg);
+                    $("#md_msg").modal();
                 },
                 error: function(){
                     alert("Error detected");

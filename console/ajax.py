@@ -1043,7 +1043,7 @@ def updatedb(request):
             data = {'msg': "Database updated successfully"}
             return JsonResponse(data)
 
-        elif up_type == "vmachines":
+        elif up_type == "datastore":
             update_model(option="datastores")
             data = {'msg': "Database updated successfully"}
             return JsonResponse(data)

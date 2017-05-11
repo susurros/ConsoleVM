@@ -166,6 +166,34 @@ $(document).ready(function(){
         $("#md_msg").modal();
     });
 
+    //Referesh
+    $("#btn_update").on('click',function (e) {
+        e.preventDefault();
+
+        var data = {
+            type: "datastore",
+        }
+        $.ajax(
+            {
+                "type": "POST",
+                "dataType": "json",
+                "url": "/ajax/updatedb/",
+                "data": data,
+                success: function(data) {
+                    console.log(data.msg)
+                    $("#info_msg").text(data.msg);
+                    $("#md_msg").modal();
+                },
+                error: function(){
+                    alert("Error detected");
+                },
+            }
+        );
+    });
+
+    // MSG
+
+
 
     $("#md_msg").on('hidden.bs.modal', function () {
         location.reload(true);
