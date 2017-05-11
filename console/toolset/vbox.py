@@ -1,7 +1,6 @@
 import re
 from console.models import OsType, Datastore, VHost, VMachine, VDisk, Snapshot
 from .guacamole import Add_Client, Remove_Client
-from time import sleep
 from .ssh import execCMD, sshSession
 
 def vbox_paser(option,data,**kwargs):

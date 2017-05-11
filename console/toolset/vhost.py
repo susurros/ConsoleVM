@@ -3,6 +3,7 @@ from .ssh import execCMD, sshSession
 from .vbox import vbox_info
 from .esx import esx_info
 from .zones import zone_info
+from .guacamole import Update_Model
 from console.models import VHost,VType, VMachine,   Datastore, OsType, Snapshot, Remote_Admin, VSwitch, Medium
 
 def vhost_parser(option,data,**kwargs):
@@ -85,7 +86,6 @@ def vhost_parser(option,data,**kwargs):
             print (iso)
             images.append(iso)
         return images
-
 
 def vhost_info(option,vhost,**kwargs):
 
@@ -692,14 +692,22 @@ def update_model(option, **kwargs):  # Mirar como acturalizar
                     )
                     new_iso.save()
 
+    elif option == "remote":
+
+        VM = VMachine.objects.all()
+
+        Update_Model(list_machines=VM)
+        #for item in VM:
+         #   Update_Model(vm=item)
+
+def update_db_init():
+    #update_model(option="ostypes")
+    #update_model(option="ifaces")
+    #update_model(option="datastores")
+    #update_model(option="vswitch")
+    #update_model(option="vmachines")
+    #update_model(option="medium")
+    update_model(option="remote")
 
 
 
-
-    '''elif option == "delete_vm_db":
-
-        db_machine = VMachine.objects.get(vuuid=vbox_info(option="get_uuid", vhost=item, vmname=vmname))
-
-        if db_machine:
-            db_machine.delete()
-    ''' # Remove if no needed

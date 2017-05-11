@@ -7,7 +7,7 @@ from .toolset.vbox import vbox_info, vbox_create, vbox_modify, vbox_create_dstor
 from .toolset.esx import esx_info, esx_create_vm, esx_create_net, esx_modify
 from .toolset.zones import zone_info, zone_create_vm, zone_create_net, zone_create_dstore
 from .toolset.vhost import vhost_info, update_model
-import json
+
 
 # Create your views here.
 
@@ -112,38 +112,6 @@ def form_vm(request):
         VH = VHost.objects.all()
 
         return render(request, 'console/form_vmachine.html', {'VH': VH})
-
-def form_vm_mod(request,pk):
-
-    '''
-    machine = get_object_or_404(VMachine, pk=pk)
-
-    if request.method == "POST":
-        pass
-
-    else:
-
-        disk = VDisk.objects.get(VMachine_id=machine.id)
-        #viface = VBOX_IFACE.objects.get(VMachine=machine.id)
-
-        vmform = VMForm(instace=machine)
-        vdform = VDForm(instace=disk)
-        viform = VIForm(intance=viface)
-
-        return render(request,'console/form_mod_vm.html')
-
-
-
-
-    if request.GET and request.session['mod_vm_id']:
-
-        vmform = VMForm()
-        vdform = VDForm()
-        viform = VIForm()
-
-
-    '''
-    pass
 
 def dash_vhost(request):
 
@@ -397,123 +365,3 @@ def dash_snap(request):
         vm = VMachine.objects.get(id=ajax_id)
     pass
 
-def console_vm(request):
-
-    print ("TEST")
-    print (request.GET.get('vmid'))
-
-    if request.GET.get('vmid'):
-        vm_id = int(escape(request.GET.get('vmid')))
-        vm = VMachine.objects.get(id=vm_id)
-        if vm_id == vm.id:
-            print ("Render")
-            return render(request, 'console/dash-console.html', {'vm': vm})
-        else:
-            Http404
-    else:
-        return render(request, 'console/dash-console.html', {})
-
-
-'''
-Borrar si no se usa
-
-def form_vm(request):
-
-
-    #request.session.clear()
-    print (request.session.get('step'))
-
-    if request.method == "GET" and request.session.get('step') == '0':
-
-        VH = VHost.objects.all()
-        return render(request, 'console/form_select_vhost.html', {'VH': VH})
-
-
-
-    elif request.method == "GET" and request.session.get('step') == '1':
-
-
-        VH = VHost.objects.get(id=request.session['vhost'])
-        images = vhost_info(option="images",vhost=VH)
-
-        if VH.VType.vendor == "VB":
-
-            ostypes = OsType.objects.all().filter(VType_id=VH.VType)
-            datastores = Datastore.objects.all().filter(VHost_id=VH.id)
-            IFACES = Ifaces.objects.all().filter(VHost_id=VH.id)
-            INTNET = vbox_info(option="intnet", vhost=VH)
-
-            return render(request, 'console/form_create_vm.html', {'VH': VH, 'OS': ostypes,'DSTORE': datastores, 'IFACES' : IFACES, 'INTNET' :INTNET, 'images':images, 'STEP': request.session['step']})
-
-
-        elif VH.VType.vendor == "VW":
-
-            ostypes = OsType.objects.all().filter(VType_id=VH.VType)
-            datastores = Datastore.objects.all().filter(VHost_id=VH.id)
-            portgroups = esx_info(option="port_groups", vhost=VH)
-
-
-            return render(request, 'console/form_create_vm.html', {'VH': VH, 'OS': ostypes,'DSTORE': datastores, 'portgroups':portgroups, 'images':images, 'STEP': request.session['step']})
-
-        elif VH.VType.vendor == "ZN":
-
-            ostypes = OsType.objects.all().filter(VType_id=VH.VType)
-            datastores = Datastore.objects.all().filter(VHost_id=VH.id)
-            portgroups = zone_info(option="port_groups", vhost=VH)
-
-            print(portgroups)
-
-            return render(request, 'console/form_create_vm.html', {'VH': VH, 'OS': ostypes,'DSTORE': datastores,'portgroups':portgroups,'STEP': request.session['step']})
-
-        else:
-            raise Http404
-
-    elif request.method == "GET" and request.session.get('step') == '2':
-
-        VH = VHost.objects.get(id=request.session['vhost'])
-
-        data = {
-            'name': request.session['vmname'],
-            'vhost': VH.name,
-            'vendor': VH.VType.vendor,
-            'cpu': request.session['cpu'],
-            'mem': request.session['mem'],
-            'os': OsType.objects.get(id=int(request.session['os'])).name,
-            'dstore': Datastore.objects.get(id=int(request.session['dstore'])).name,
-            'dsksz': request.session['dsksz'],
-            'ifaces': request.session['ifaces'],
-            'step': request.session['step'],
-
-        }
-
-
-        if VH.VType.vendor == "VB":
-            data['rdpuser'] = request.session['rdpuser']
-            data['rdppass'] = request.session['rdppass']
-            data['rdpport'] = request.session['rdpport']
-            data['meddpath'] = request.session['meddpath']
-
-
-        elif VH.VType.vendor == "VW":
-            data['rdppass'] = request.session['rdppass']
-            data['rdpport'] = request.session['rdpport']
-            data['meddpath'] = request.session['meddpath']
-
-
-        elif VH.VType.vendor == "ZN":
-            data['rdpuser'] = request.session['rdpuser']
-            data['rdppass'] = request.session['rdppass']
-            data['rdpport'] = request.session['rdpport']
-
-        else:
-            raise Http404
-
-
-        return render(request, 'console/form_create_vm_confirm.html',{'VMDATA': data, "STEP": request.session['step'],'VH':VH})
-
-    else:
-
-        VH = VHost.objects.all()
-
-        return render(request, 'console/form_select_vhost.html', {'VH': VH})
-'''

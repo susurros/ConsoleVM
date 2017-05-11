@@ -567,17 +567,10 @@ def esx_control(option,**kwargs):
 
 def esx_create_vm(vhost,vm):
 
-
-
-
     #Load Env Variables
     file_tmp = "/tmp"
 
-
     if not VMachine.objects.filter(name=vm['name']).exists():
-
-
-
 
         vm_dir = vm['datastore'] + "/" + vm['name']
         cmdCLI = "mkdir " + vm_dir
@@ -657,8 +650,6 @@ def esx_create_vm(vhost,vm):
                 print (line)
 
             vuuid = esx_info(option="get_uuid",vhost=vhost,vmname=vm['name'])
-
-
 
             if vuuid:
                 if esx_info(option="vm_dir",vhost=vhost,vmdir=vm_dir):

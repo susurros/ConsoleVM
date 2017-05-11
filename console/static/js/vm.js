@@ -652,6 +652,32 @@ $(document).ready(function(){
     });
 
 
+    //Referesh
+      $("#btn_update").on('click',function (e) {
+        e.preventDefault();
+
+        var data = {
+            type: "vmachine",
+        }
+        $.ajax(
+            {
+                "type": "POST",
+                "dataType": "json",
+                "url": "/ajax/updatedb/",
+                "data": data,
+                success: function() {
+                     window.location.reload(true);
+                },
+                error: function(){
+                    alert("Error detected");
+                },
+            }
+        );
+    });
+
+
+
+
     // MSG
 
     $("#md_msg_form").on('hidden.bs.modal', function () {

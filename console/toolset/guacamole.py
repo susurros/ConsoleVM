@@ -6,62 +6,50 @@ from xml.etree import ElementTree as ET
 conf_file = BASE_DIR + "/console/toolset/cfg/noauth-config.xml"
 
 
+def Remove_Client(name):
+
+    xml_conf = ET.parse(conf_file)
+    xml_root = xml_conf.getroot()
+    list_clients = xml_root.getchildren()
+
+
+    for item in  list_clients:
+        if item.attrib['name'] == name:
+            print("Cliente dummy", item)
+            xml_root.remove (item)
+
+    xml_conf.write(conf_file)
+
 
 def Add_Client(name,protocol,hostname,port,username,password):
 
     xml_conf =  ET.parse(conf_file)
     xml_root = xml_conf.getroot()
-    list_clients = xml_root.getchildern()
 
-    client = list_clients[0]
+    print ("Maquina;",name,"proto;",protocol,"usernam:",username,"port:", port, "password:", password)
+    if port == None:
+        port = " "
+    if password == None:
+        password = " "
+    if username == None or username == "":
+        print ("CAmbio Nmombre")
+        username = " "
 
-    if client.attrib['name'] == "dummy":
-        list_param = client.getchildren()
-        for item in list_param:
-            if item.attrib['name'] == "hostname":
-                item.attrib['value'] = hostname
-            elif item.attrib['name'] == "port":
-                item.attrib['value'] = port
-            elif item.attrib['name'] == "username":
-                item.attrib['value'] = username
-            elif item.attrib['name'] == "password":
-                item.attrib['value'] = password
-
-        client.attrib['name'] = name
-        client.attrib['protocol'] = protocol
-
-    else:
-
-        new_client = ET.Element('config', name= name, protocol= protocol)
-        for item in ["hostname","port","username","password"]:
-            if item == "hostname":
-                new_param = ET.Element('param',name=item, value=hostname)
-                new_client.append(new_param)
-            elif item == "port":
-                new_param = ET.Element('param', name=item, value=port)
-                new_client.append(new_param)
-            elif item == "username":
-                new_param = ET.Element('param', name=item, value=username)
-                new_client.append(new_param)
-            elif item == "password":
-                new_param = ET.Element('param', name=item, value=password)
-                new_client.append(new_param)
-        xml_root.append(new_client)
-
-    xml_conf.write(conf_file)
-
-
-def Remove_Client(name):
-
-    xml_conf = ET.parse(conf_file)
-    xml_root = xml_conf.getroot()
-    list_clients = xml_root.getchildern()
-
-
-    for item in  list_clients:
-        if item.attrib['name'] == name:
-            xml_root.remove (item)
-
+    new_client = ET.Element('config', name=name, protocol=protocol)
+    for item in ["hostname", "port", "username", "password"]:
+        if item == "hostname":
+            new_param = ET.Element('param', name=item, value=hostname)
+            new_client.append(new_param)
+        elif item == "port":
+            new_param = ET.Element('param', name=item, value=str(port))
+            new_client.append(new_param)
+        elif item == "username" and not protocol == "vnc":
+            new_param = ET.Element('param', name=item, value=username)
+            new_client.append(new_param)
+        elif item == "password":
+            new_param = ET.Element('param', name=item, value=password)
+            new_client.append(new_param)
+    xml_root.append(new_client)
     xml_conf.write(conf_file)
 
 
@@ -96,9 +84,8 @@ def Modify_Client(name, **kwargs):
 
     xml_conf = ET.parse(conf_file)
     xml_root = xml_conf.getroot()
-    xml_conf.write(conf_file)
 
-    list_clients = xml_root.getchildern()
+    list_clients = xml_root.getchildren()
 
     for item in list_clients:
         if item.attrib['name'] == name:
@@ -119,3 +106,19 @@ def Modify_Client(name, **kwargs):
 
     xml_conf.write(conf_file)
 
+
+def Update_Model(list_machines):
+
+
+
+    xml_conf = ET.parse(conf_file)
+    xml_root = xml_conf.getroot()
+
+    for item in list_machines:
+        Remove_Client(item.name)
+        if item.VHost.VType.vendor == "VB":
+            Add_Client(name=item.name, protocol="rdp", hostname=item.VHost.ipaddr, port=item.rdport, username=item.rdpuser,password=item.rdppass)
+        elif item.VHost.VType.vendor == "VB":
+            Add_Client(name=vm.name, protocol="vnc", hostname=item.VHost.ipaddr, port=item.rdport, password=item.rdppass)
+        elif item.VHost.VType.vendor == "ZN":
+            Add_Client(name=item.name, protocol="ssh",hostname=item.VHost.ipaddr, port=item.rdport, username= item.rdpuser, password= item.rdppass)

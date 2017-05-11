@@ -1,4 +1,5 @@
 from django.conf.urls import include, url
+from console.toolset.vhost import update_db_init
 from . import views
 from . import ajax
 
@@ -12,7 +13,6 @@ urlpatterns = [
     url(r'^vhost/datastore/new/$', views.form_datastore),
     url(r'^vhost/network/$', views.dash_network),
     url(r'^vhost/network/new/$', views.form_network),
-    url(r'^vmachine/console/$', views.console_vm),
     url(r'^ajax/startvm/$', ajax.start_vm),
     url(r'^ajax/stopvm/$', ajax.stop_vm),
     url(r'^ajax/pausevm/$', ajax.pause_vm),
@@ -30,8 +30,11 @@ urlpatterns = [
     url(r'^ajax/vhost_update_query/$', ajax.vhost_update_query),
     url(r'^ajax/net_update_query/$', ajax.net_update_query),
     url(r'^ajax/dstore_update_query/$', ajax.dstore_update_query),
+    url(r'^ajax/updatedb/$', ajax.updatedb),
     url(r'^ajax/form_vm/$', ajax.form_vm),
     url(r'^ajax/control_vm/$', ajax.control_vh),
     url(r'^ajax/remote/$', ajax.remote),
 
 ]
+
+update_db_init()

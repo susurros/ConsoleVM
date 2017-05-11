@@ -1,13 +1,13 @@
 import json
-from .views import form_vm
-from .models import VMachine, VHost, VType, Datastore,   OsType, VSwitch,  Snapshot, Medium
+from .models import VMachine, VHost, Datastore,   OsType, VSwitch,  Snapshot, Medium
 from console.toolset.vbox import vbox_info, vbox_create, vbox_control, vbox_snapshots, vbox_modify, vbox_delete_dstore, vbox_delete_vm, vbox_clone
 from console.toolset.esx import esx_info, esx_create_vm, esx_control, esx_delete_vm, esx_modify, esx_snapshots, esx_delete_net, esx_clone
 from console.toolset.zones import zone_info, zone_create_vm, zone_control, zone_delete_vm, zone_delete_net, zone_delete_dstore, zone_clone, zone_modify
+from console.toolset.vhost import update_model
 from django.http import Http404, HttpResponse, JsonResponse, HttpResponseRedirect
-from django.shortcuts import render, redirect
-from django.core import serializers
 from django.utils.html import escape
+
+# VMACHINES
 
 def start_vm(request):
 
@@ -1022,7 +1022,37 @@ def del_net(request):
     else:
         return Http404
 
+def updatedb(request):
+    if request.is_ajax() and request.POST:
+        up_type = escape(request.POST.get('type'))
 
+        if up_type == "vmachines":
+            update_model(option="ostypes")
+            update_model(option="ifaces")
+            update_model(option="datastores")
+            update_model(option="vswitch")
+            update_model(option="vmachines")
+            update_model(option="medium")
+            update_model(option="remote")
+            data = {'msg': "Database updated successfully" }
+            return JsonResponse(data)
+
+        elif up_type == "vswitch":
+            update_model(option="ifaces")
+            update_model(option="vswitch")
+            data = {'msg': "Database updated successfully"}
+            return JsonResponse(data)
+
+        elif up_type == "vmachines":
+            update_model(option="datastores")
+            data = {'msg': "Database updated successfully"}
+            return JsonResponse(data)
+
+        else:
+            data = {'msg': "Error: Update Database Failed. Please  contact de administrator" }
+            return JsonResponse(data)
+    else:
+        return Http404
 
 
 
