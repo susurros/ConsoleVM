@@ -695,12 +695,12 @@ def update_model(option, **kwargs):  # Mirar como acturalizar
          #   Update_Model(vm=item)
 
 def update_db_init():
-    #update_model(option="ostypes")
-    #update_model(option="ifaces")
-    #update_model(option="datastores")
-    #update_model(option="vswitch")
-    #update_model(option="vmachines")
-    #update_model(option="medium")
+    update_model(option="ostypes")
+    update_model(option="ifaces")
+    update_model(option="datastores")
+    update_model(option="vswitch")
+    update_model(option="vmachines")
+    update_model(option="medium")
     update_model(option="remote")
 
 

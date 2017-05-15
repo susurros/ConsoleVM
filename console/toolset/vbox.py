@@ -481,11 +481,11 @@ def vbox_create(vhost,vm):  #Decidir si lista o clase para mandar los parametros
     nic = vm['iface']
 
     if vm['type'] == 'intnet':
-        ntype = "--inetnet --intnet1 " + vm['net']
+        ntype = "intnet --intnet1 " + vm['net']
     elif vm['iface'] == 'bridged':
-        ntype = "--bridged --bridgeadapter1 " + vm['iface']
+        ntype = "bridged --bridgeadapter1 " + vm['iface']
     else:
-        ntype = "--nat"
+        ntype = "nat"
 
     cmdCLI = "VBoxManage modifyvm " + vm['name'] + "--nic1 " + ntype + " --nictype1 " + vm['driver']
     ssh.addCommand(cmdCLI)
