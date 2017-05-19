@@ -61,6 +61,22 @@ def execCMD(vhost,cmd):
         print ("We had an authentication exception!")
         shell = None
 
+    except paramiko.ssh_exception.BadAuthenticationType:
+        print ("Paramiko BadAuthenticationType")
+
+    except paramiko.ssh_exception.NoValidConnectionsError:
+        print ("Paramiko NoValidConnectionsError")
+
+    except paramiko.ssh_exception.PartialAuthentication:
+        print ("Paramiko PartialAuthentication")
+
+    except paramiko.ssh_exception.PasswordRequiredException:
+        print ("Paramiko PasswordRequiredException")
+
+    except paramiko.ssh_exception.ProxyCommandFailure:
+        print ("Paramiko ProxyCommandFailure")
+
+
     except Exception:
         traceback.print_exc()
 
@@ -100,10 +116,24 @@ def execSFTP(vhost,remote_path,local_path,method):
         print ("We had an authentication exception!")
         shell = None
 
+    except paramiko.ssh_exception.BadAuthenticationType:
+        print ("Paramiko BadAuthenticationType")
+
+    except paramiko.ssh_exception.NoValidConnectionsError:
+        print ("Paramiko NoValidConnectionsError")
+
+    except paramiko.ssh_exception.PartialAuthentication:
+        print ("Paramiko PartialAuthentication")
+
+    except paramiko.ssh_exception.PasswordRequiredException:
+        print ("Paramiko PasswordRequiredException")
+
+    except paramiko.ssh_exception.ProxyCommandFailure:
+        print ("Paramiko ProxyCommandFailure")
+
+
     except Exception:
         traceback.print_exc()
-
-
 
 
 

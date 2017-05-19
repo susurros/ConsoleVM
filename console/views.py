@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.html import escape
 from django.http import Http404, HttpResponse, JsonResponse
+from django.contrib.auth.decorators import login_required
 from .models import VMachine, VHost, VType, Datastore, OsType, VSwitch # Borrar si no se usa Ifaces, VBOX_IFACE, VDisk
 from .forms import VHForm, DSForm
 from .toolset.vbox import vbox_info, vbox_create, vbox_modify, vbox_create_dstore, vbox_delete_vm
@@ -10,7 +11,7 @@ from .toolset.vhost import vhost_info, update_model
 
 
 # Create your views here.
-
+@login_required()
 def dash_vm(request):
 
     update_model(option="update_state")
@@ -20,6 +21,7 @@ def dash_vm(request):
 
     return render(request, 'console/dash-vm.html', {'vm':dbmachines,'vv': VV})
 
+@login_required(login_url='/login/')
 def form_vm(request):
 
     if request.is_ajax() and request.POST:
@@ -113,6 +115,7 @@ def form_vm(request):
 
         return render(request, 'console/form_vmachine.html', {'VH': VH})
 
+@login_required(login_url='/login/')
 def dash_vhost(request):
 
     vhosts = VHost.objects.order_by('VType')
@@ -134,6 +137,7 @@ def dash_vhost(request):
 
     return render(request, 'console/dash-vh.html', {'vh': virtualhost, 'vv': VV})
 
+@login_required(login_url='/login/')
 def form_vhost (request):
 
     if request.is_ajax() and request.method == "POST":
@@ -167,6 +171,7 @@ def form_vhost (request):
 
     return render(request, 'console/form_vhost.html', {'form': form})
 
+@login_required(login_url='/login/')
 def dash_datastore(request):
 
 
@@ -201,6 +206,7 @@ def dash_datastore(request):
 
     return render(request, 'console/dash-dstore.html', {'dstore': dstore, 'vhosts': VH})
 
+@login_required(login_url='/login/')
 def form_datastore(request):
 
     if request.is_ajax() and request.POST:
@@ -268,6 +274,7 @@ def form_datastore(request):
     else:
         return Http404
 
+@login_required(login_url='/login/')
 def dash_network(request):
 
     vsw = VSwitch.objects.all()
@@ -275,6 +282,7 @@ def dash_network(request):
 
     return render(request, 'console/dash-network.html', {'vswitch': vsw, 'vhosts': VH})
 
+@login_required(login_url='/login/')
 def form_network(request):
 
     if request.is_ajax() and request.POST:
@@ -358,10 +366,14 @@ def form_network(request):
         VH = VHost.objects.all()
         return render(request, 'console/form_network.html', {'VH': VH})
 
+@login_required(login_url='/login/')
 def dash_snap(request):
 
     if request.POST:
         ajax_id = int(request.POST.get('vmid'))
         vm = VMachine.objects.get(id=ajax_id)
     pass
+
+
+
 

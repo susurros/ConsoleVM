@@ -1,9 +1,12 @@
 from django.conf.urls import include, url
 from console.toolset.vhost import update_db_init
+from django.contrib.auth import views as auth_views
 from . import views
 from . import ajax
 
 urlpatterns = [
+    url(r'^login/$', auth_views.login, {'template_name': 'console/login.html'}, name='login'),
+    url(r'^logout/$', auth_views.logout, {'next_page': '/'}, name='logout'),
     url(r'^$', views.dash_vm),
     url(r'^vmachine/$', views.dash_vm),
     url(r'vhost/$', views.dash_vhost),
@@ -34,7 +37,6 @@ urlpatterns = [
     url(r'^ajax/form_vm/$', ajax.form_vm),
     url(r'^ajax/control_vm/$', ajax.control_vh),
     url(r'^ajax/remote/$', ajax.remote),
-
 ]
 
-update_db_init()
+#update_db_init()

@@ -152,6 +152,8 @@ $(document).ready(function(){
     $("#btn_update").on('click',function (e) {
         e.preventDefault();
 
+        console.log("Click")
+
         var data = {
             type: "vswitch",
         }
