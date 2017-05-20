@@ -935,6 +935,11 @@ def del_dstore(request):
                     dstore.delete()
                 else:
                     return Http404
+            elif dstore.VHost.VType.vendor == "VW":
+                data = {
+                    'msg': 'The Datastore' + dstore.name + ' has not been deleted. VMWARE Datastores cannot be deleted with this applicaction, please contact an Administrator',
+                    'URI': '/vhost/datastore',
+                }
             return JsonResponse(data)
 
         else:

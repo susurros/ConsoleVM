@@ -11,9 +11,14 @@
     <section class="content-header">
       <h1>
           Virtual Networks
-          <button id="btn_update" class="btn btn-info pull-right">
-              <span class="fa fa-fw fa-refresh"></span>Update</a>
-          </button>
+          <div class="btn-group  pull-right">
+              <button id="btn_open_from" class="btn btn-primary">
+                <span class="glyphicon glyphicon-plus"></span>Add
+              </button>
+              <button id="btn_update" class="btn btn-info">
+                <span class="fa fa-fw fa-refresh"></span>Update
+              </button>
+          </div>
       </h1>
     </section>
 
@@ -64,15 +69,7 @@
                     {%  endfor %}
                  </table>
               </div><!-- .panel.body -->
-              <div class="panel-footer">
-                  <div class="row">
-                      <div class="col-md-12">
-                          <div class="btn-group-sm">
-                              <input type="button" id="btn_open_from" class="btn btn-info" value="Add">
-                          </div>
-                      </div>
-                  </div>
-              </div>
+
             </div>
           {%  endfor %}
       </div>

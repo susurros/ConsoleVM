@@ -11,9 +11,14 @@
     <section class="content-header">
       <h1>
           Datastores
-          <button id="btn_update" class="btn btn-info pull-right">
-              <span class="fa fa-fw fa-refresh"></span>Update</a>
-          </button>
+          <div class="btn-group  pull-right">
+              <button id="btn_open_from" class="btn btn-primary">
+                <span class="glyphicon glyphicon-plus"></span>Add
+              </button>
+              <button id="btn_update" class="btn btn-info">
+                <span class="fa fa-fw fa-refresh"></span>Update
+              </button>
+          </div>
       </h1>
     </section>
 
@@ -36,48 +41,39 @@
                           <th class="info">Size (MB)</th>
                           <th class="info">Free (MB)</th>
                           <th class="info">Used (%)</th>
-                          {% if not vhost.VType.vendor == "VW" %}
                           <th class="info">Actions</th>
-                          {% endif %}
                         </tr>
                      </thead>
                     {% for ds in dstore %}
                         {% if ds.vhost == vhost.name %}
                            <tbody>
                                <tr>
-                                    <td width="10%>">{{ds.name}}</td>
-                                    <td width="10%">{{ds.dpath}}</td>
+                                    <td width="20%>">{{ds.name}}</td>
+                                    <td width="25%">{{ds.dpath}}</td>
                                     <td width="10%">{{ds.dsize_total}}</td>
                                     <td width="10%">{{ds.dsize_free}}</td>
                                     <td width="10%">{{ds.dsize_use}}</td>
-                                    {% if not vhost.VType.vendor == "VW" %}
-                                    <td width="20%">
+                                    <td width="5%">
                                         <div class="btn-group-xs" id="chg_button_{{ ds.id }}">
                                            {% csrf_token %}
                                            <input type="hidden" id="dstore_id" name="dstore_id" value='{{ds.id}}'>
                                            <input type="hidden" id="dstore_name" name="dstore_name" value='{{ds.name}}'>
                                            <input type="hidden" id="dstore_path" value="{{ ds.dpath }}">
+                                           {% if  vhost.VType.vendor == "VW" %}
+                                           <input type="button" id="btn_delete_dstore" class="btn " value="Delete" disabled>
+                                           {% else %}
                                            <input type="button" id="btn_delete_dstore" class="btn btn-danger" value="Delete">
+                                           {% endif %}
                                        </div>
                                      </td>
-                                    {% endif %}
+
                                 </tr>
                            </tbody>
                        {% endif %}
                     {%  endfor %}
                  </table>
               </div><!-- .panel.body -->
-              <div class="panel-footer">
-                  <div class="row">
-                      <div class="col-md-12">
-                          {%  if not vhost.VType.vendor == "VW" %}
-                          <div class="btn-group-sm">
-                              <input type="button" id="btn_open_from" class="btn btn-info" value="Add">
-                          </div>
-                          {% endif %}
-                      </div>
-                  </div>
-              </div>
+
             </div>
           {%  endfor %}
 

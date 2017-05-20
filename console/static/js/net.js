@@ -48,7 +48,7 @@ $(document).ready(function(){
 
     });
 
-    $('input[id^="btn_open_from"]').click(function(e){
+    $("#btn_open_from").click(function(e){
 
         e.preventDefault();
 
