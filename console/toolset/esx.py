@@ -574,8 +574,7 @@ def esx_create_vm(vhost,vm):
 
         vm_dir = vm['datastore'] + "/" + vm['name']
         cmdCLI = "mkdir " + vm_dir
-        ssh.addCommand(cmdCLI)
-        ssh.execCMD()
+        execCMD(vhost=vhost, cmd=cmdCLI)
 
         if esx_info(option="vm_dir", vhost=vhost, vmdir=vm_dir):
 
@@ -655,15 +654,29 @@ def esx_create_vm(vhost,vm):
                 if esx_info(option="vm_dir",vhost=vhost,vmdir=vm_dir):
                     if esx_info(option="vm_file", vhost=vhost, vmfile=vm_file, vmdir=vm_dir):
                         if esx_info(option="vm_disk", vhost=vhost, vmdisk=dpath,vuuid=vuuid):
-                            new_vm = VMachine(
-                                vuuid=vuuid,
-                                name=vm['name'],
-                                cpu=vm['cpu'],
-                                mem=vm['mem'],
-                                VHost_id=vhost.id,
-                                OsType_id=OsType.objects.get(name=vm['ostype']).id,
-                                Datastore_id=Datastore.objects.get(dpath=vm['datastore']).id,
-                            )
+                            if vm['rdpport']:
+                                new_vm = VMachine(
+                                    vuuid=vuuid,
+                                    name=vm['name'],
+                                    cpu=vm['cpu'],
+                                    mem=vm['mem'],
+                                    VHost_id=vhost.id,
+                                    OsType_id=OsType.objects.get(name=vm['ostype']).id,
+                                    Datastore_id=Datastore.objects.get(dpath=vm['datastore']).id,
+                                    rdport=vm['rdpport'],
+                                    rdppass=vm['rdppass']
+                                )
+                            else:
+                                new_vm = VMachine(
+                                    vuuid=vuuid,
+                                    name=vm['name'],
+                                    cpu=vm['cpu'],
+                                    mem=vm['mem'],
+                                    VHost_id=vhost.id,
+                                    OsType_id=OsType.objects.get(name=vm['ostype']).id,
+                                    Datastore_id=Datastore.objects.get(dpath=vm['datastore']).id,
+                                )
+
 
                             new_vm.save()
 
@@ -675,7 +688,7 @@ def esx_create_vm(vhost,vm):
 
                             new_dsk.save()
 
-                            Add_Client(name=new_vm.name, protocol="vnc", port=new_vm.port,password=new_vm.rdppass)
+                            Add_Client(name=new_vm.name, protocol="vnc", port = new_vm.rdport, username = new_vm.rdpuser, password = new_vm.rdppass, hostname = vhost.ipaddr)
 
                             return "OK"
 
@@ -819,8 +832,7 @@ def esx_modify(vhost,vm,data):
             mod_vm.save()
 
             Remove_Client(name=vm.name)
-            Add_Client(name=mod_vm.name, protocol="vnc", port=mod_vm.port, username=mod_vm.rdpuser,
-                       password=mod_vm.rdppass)
+            Add_Client(name=mod_vm.name, protocol="vnc", port=mod_vm.rdport,password=mod_vm.rdppass, hostname=vhost.ipaddr)
 
             return True
 
@@ -924,6 +936,9 @@ def esx_clone(vhost,vm,clone_name):
                     )
 
                     new_dsk.save()
+
+                    Add_Client(name=new_vm.name, protocol="vnc", port=new_vm.rdport, username=new_vm.rdpuser,
+                               password=new_vm.rdppass, hostname=vhost.ipaddr)
 
                     return True
 

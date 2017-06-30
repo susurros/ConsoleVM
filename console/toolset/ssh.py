@@ -131,6 +131,8 @@ def execSFTP(vhost,remote_path,local_path,method):
     except paramiko.ssh_exception.ProxyCommandFailure:
         print ("Paramiko ProxyCommandFailure")
 
+    except paramiko.ssh_exception.NoValidConnectionsError:
+        print("Paramiko NoValidConnectionsError")
 
     except Exception:
         traceback.print_exc()

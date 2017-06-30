@@ -77,11 +77,8 @@ def form_vm(request):
 
             elif VH.VType.vendor == "VW":
 
-                print(vmdata)
-
+                vmdata['rdppass'] = escape(request.POST.get('rdppass'))
                 msg = esx_create_vm(vhost=VH,vm=vmdata)
-
-                print(msg)
 
                 if msg == "OK":
                     data = {

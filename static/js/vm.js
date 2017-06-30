@@ -36,7 +36,14 @@ $(document).ready(function(){
                         for (key in vswlist){
                             $("#id_vswitch").append("<option value='"+vswlist[key].id+"'>"+vswlist[key].vsw +"</option>");
                         }
-                        $("#Medium").empty()
+                        $("#Medium").empty();
+                        $("#Remote_body").empty();
+                        $("#Remote_body").append(
+                            '<div class="row"><div class="form-group">'+
+                                '<div class="col-md-2"><label class="control-label" for="rdp_port">Port</label></div>' +
+                                '<div class="col-md-4"><input class="form-control" type="text"  id="rdp_port" value=""></div>'+
+                            '</div><!-- ./form group --></div>'
+                        );
                     }
                     else {
                         $("#Net_Body").empty();
@@ -56,6 +63,7 @@ $(document).ready(function(){
                         for (key in drivers){
                             $("#id_driver").append("<option value='"+drivers[key]+"'>"+drivers[key] +"</option>");
                         }
+
                         $("#Medium").empty();
                         $("#Medium").append(
                             '<div class="panel box box-primary"><div class="box-header with-border"><h4 class="box-title">Medium Data</h4></div>'+
@@ -67,6 +75,33 @@ $(document).ready(function(){
                         );
                         for (key in isos){
                             $("#image").append("<option value='"+isos[key].id+"'>"+isos[key].name +"</option>");
+                        }
+
+                        if (vendor== "VW"){
+                            $("#Remote_body").empty();
+                            $("#Remote_body").append(
+                                '<div class="row"><div class="form-group">'+
+                                    '<div class="col-md-2"><label class="control-label" for="rdp_pass">Password:</label></div>' +
+                                    '<div class="col-md-4"><input class="form-control" type="text"  id="rdp_pass" value=""></div>'+
+                                    '<div class="col-md-2"><label class="control-label" for="rdp_port">Port</label></div>' +
+                                    '<div class="col-md-4"><input class="form-control" type="text"  id="rdp_port" value=""></div>'+
+                                '</div><!-- ./form group --></div>'
+                            );
+                        }
+                        else {
+                            $("#Remote_body").empty();
+                            $("#Remote_body").append(
+                                '<div class="row"><div class="form-group">'+
+                                    '<div class="col-md-2"><label for="rdp_user">User:</label></div>'+
+                                    '<div class="col-md-4"><input class="form-control" type="text" id="rdp_user" maxlength="30" value="" ></div>'+
+                                    '<div class="col-md-2"><label class="control-label" for="rdp_pass">Password:</label></div>'+
+                                    '<div class="col-md-4"><input class="form-control" type="text"  id="rdp_pass" value=""></div>'+
+                                '</div><!-- ./form group --></div>'+
+                                '<div class="row"><div class="form-group">'+
+                                    '<div class="col-md-2"><label class="control-label" for="rdp_port">Port</label></div>'+
+                                    '<div class="col-md-4"><input class="form-control" type="text"  id="rdp_port" value="" ></div>' +
+                                '</div><!-- ./form group --></div>'
+                            )
                         }
 
                     }

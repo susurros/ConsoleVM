@@ -504,7 +504,8 @@ def zone_create_vm(vhost,vm):
 
         new_dsk.save()
 
-        Add_Client(name=new_vm.name,protocol="ssh", port=new_vm.port, username=new_vm.rdpuser, password=new_vm.rdppass)
+        Add_Client(name=new_vm.name,protocol="ssh", port=new_vm.rdport, username=new_vm.rdpuser, password=new_vm.rdppass, hostname=vhost.ipaddr)
+
 
         return True
     else:
@@ -519,9 +520,7 @@ def zone_delete_vm(vhost,vm):
     ssh.addCommand(cmdCLI)
     cmdCLI = 'zonecfg -z ' + vm.name + ' delete -F'
     ssh.addCommand(cmdCLI)
-    print (vm.Datastore.name)
     ds_zfs_path = zone_info(option="datastore_zfs_path",vhost=vhost,datastore=vm.Datastore.dpath)
-    print (ds_zfs_path)
     zdisk = ds_zfs_path + "/" + vm.name
     cmdCLI = 'zfs destroy -r ' + zdisk
     ssh.addCommand(cmdCLI)
@@ -602,6 +601,8 @@ def zone_clone(vhost,vm,clone_name):
         )
 
         new_vm.save()
+
+        Add_Client(name=new_vm.name,protocol="ssh", port=new_vm.rdport, username=new_vm.rdpuser, password=new_vm.rdppass, hostname=vhost.ipaddr)
 
         return True
 

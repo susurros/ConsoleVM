@@ -21,19 +21,19 @@ def Remove_Client(name):
     xml_conf.write(conf_file)
 
 
-def Add_Client(name,protocol,hostname,port,username,password):
+def Add_Client(name,protocol,hostname,port,password,**kwargs):
+
+    if kwargs.get('username'):
+         username = kwargs['username']
 
     xml_conf =  ET.parse(conf_file)
     xml_root = xml_conf.getroot()
 
-    print ("Maquina;",name,"proto;",protocol,"usernam:",username,"port:", port, "password:", password)
     if port == None:
         port = " "
     if password == None:
         password = " "
-    if username == None or username == "":
-        print ("CAmbio Nmombre")
-        username = " "
+
 
     new_client = ET.Element('config', name=name, protocol=protocol)
     for item in ["hostname", "port", "username", "password"]:
@@ -109,16 +109,14 @@ def Modify_Client(name, **kwargs):
 
 def Update_Model(list_machines):
 
-
-
-    xml_conf = ET.parse(conf_file)
-    xml_root = xml_conf.getroot()
+ #   xml_conf = ET.parse(conf_file)
+#    xml_root = xml_conf.getroot()
 
     for item in list_machines:
         Remove_Client(item.name)
         if item.VHost.VType.vendor == "VB":
             Add_Client(name=item.name, protocol="rdp", hostname=item.VHost.ipaddr, port=item.rdport, username=item.rdpuser,password=item.rdppass)
-        elif item.VHost.VType.vendor == "VB":
-            Add_Client(name=vm.name, protocol="vnc", hostname=item.VHost.ipaddr, port=item.rdport, password=item.rdppass)
+        elif item.VHost.VType.vendor == "VW":
+            Add_Client(name=item.name, protocol="vnc", hostname=item.VHost.ipaddr, port=item.rdport, password=item.rdppass)
         elif item.VHost.VType.vendor == "ZN":
             Add_Client(name=item.name, protocol="ssh",hostname=item.VHost.ipaddr, port=item.rdport, username= item.rdpuser, password= item.rdppass)

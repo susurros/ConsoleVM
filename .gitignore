@@ -3,3 +3,4 @@ __pycache__
 mydatabase
 console/migrations/*.py
 /console/toolset/cfg/noauth-config.xml.ori
+.idea/

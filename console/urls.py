@@ -39,4 +39,5 @@ urlpatterns = [
     url(r'^ajax/remote/$', ajax.remote),
 ]
 
-#update_db_init()
+update_db_init()
+

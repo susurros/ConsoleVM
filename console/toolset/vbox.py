@@ -544,7 +544,7 @@ def vbox_create(vhost,vm):  #Decidir si lista o clase para mandar los parametros
         new_dsk.save()
 
 
-        Add_Client(name=new_vm.name,protocol="rdp", port=new_vm.port, username=new_vm.rdpuser, password=new_vm.rdppass)
+        Add_Client(name=new_vm.name,protocol="rdp", port=new_vm.rdport, username=new_vm.rdpuser, password=new_vm.rdppass, hostname=vhost.ipaddr)
 
 
         return True
@@ -626,7 +626,7 @@ def vbox_modify(vhost,vm,data):
         mod_vm.save()
 
         Remove_Client(name=vm.name)
-        Add_Client(name=mod_vm.name,protocol="rdp", port=mod_vm.port, username=mod_vm.rdpuser, password=mod_vm.rdppass)
+        Add_Client(name=mod_vm.name,protocol="rdp", port=mod_vm.rdport, username=mod_vm.rdpuser, password=mod_vm.rdppass)
 
 
         return True
@@ -674,7 +674,8 @@ def vbox_clone(vhost,vm,clone_name):
     )
     new_vm.save()
 
-
+    Add_Client(name=new_vm.name, protocol="rdp", port=new_vm.rdport, username=new_vm.rdpuser, password=new_vm.rdppass,
+               hostname=vhost.ipaddr)
 
     if VMachine.objects.get(vuuid=vbox_info(option="get_uuid",vhost=vhost,vmname=clone_name)):
         return True
