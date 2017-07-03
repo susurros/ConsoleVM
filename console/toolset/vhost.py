@@ -1,10 +1,11 @@
-import re, math
+import re, math, random
 from .ssh import execCMD, sshSession
-from .vbox import vbox_info
+from .vbox import vbox_info, vbox_vrde
 from .esx import esx_info
 from .zones import zone_info
 from .guacamole import Update_Model
 from console.models import VHost,VType, VMachine,   Datastore, OsType, Snapshot, Remote_Admin, VSwitch, Medium
+
 
 def vhost_parser(option,data,**kwargs):
 
@@ -146,41 +147,6 @@ def vhost_info(option,vhost,**kwargs):
         cmdCLI = "ls -1 " + vhost.isopath +"/*.iso"
         return vhost_parser(option=option, data=execCMD(vhost=vhost, cmd=cmdCLI))
 
-    elif option == "rem_adm_port":  # Not Implmeted
-
-        VH = Remote_Admin.objects.all().filter(VHost__id=vhost.id)
-
-        if not VH:
-            new_port = 20000
-        else:
-            print (VH)
-        rem_adm = Remote_Admin.objects.filter(VHost=vhost).latest(id)
-        print ("remote %s", rem_adm)
-
-        if rem_adm:
-            new_port = rem_adm.port + 1
-        else:
-            new_port = 20000
-
-        ports = Remote_Admin.objects.all()
-        block = 0
-
-        while block == 0:
-
-            port_block = 0
-            for port in ports:
-                if port.rdport == new_port:
-                    port_block = 1
-
-            if port_block == 0:
-                block = 1
-                final_port = new_port
-
-            else:
-                new_port = rem_adm.port + 1
-
-        return final_port
-
 def vhost_control(option,vhost):
 
     if option == "shutdown":
@@ -223,12 +189,6 @@ def update_model(option, **kwargs):  # Mirar como acturalizar
                         vmname = machine['name']
                         vnic= vbox_info(option="vm_nic",vhost=item,vmname=vmname)
 
-                        print ("REDES VBOX")
-                        print(vnic)
-
-                        print("VNIC TYPE",vnic['type'])
-
-
                         if vnic['type'] == "intnet":
                             vsw = VSwitch.objects.get(VHost__id=item.id,type="inet",name=vnic['name'])
                         elif vnic['type'] == "bridged":
@@ -250,16 +210,12 @@ def update_model(option, **kwargs):  # Mirar como acturalizar
 
                     else:
 
+                        ("update newmachine")
                         vmname = machine['name']
                         os = OsType.objects.filter(VType__id=item.VType.id).get(name=vbox_info(option="vm_os", vhost=item, vmname=vmname))
                         dpath = vbox_info(option="vm_path", vhost=item, vmname=vmname)
                         ds = Datastore.objects.filter(VHost__id=item.id).get(dpath=dpath)
                         vnic= vbox_info(option="vm_nic",vhost=item,vmname=vmname)
-
-                        print ("REDES VBOX", vmname)
-                        print(vnic)
-
-                        print("VNIC TYPE",vnic['type'])
 
                         if vnic['type'] == "intnet":
                             vsw = VSwitch.objects.get(VHost__id=item.id,type="inet",name=vnic['name'])
@@ -270,7 +226,7 @@ def update_model(option, **kwargs):  # Mirar como acturalizar
                             vsw = VSwitch.objects.get(VHost__id=item.id, type="nat")
                         else:
                             vsw = None
-
+                        vrde_data = vbox_vrde(vmname=vmname,vhost=item)
                         new_vm = VMachine(
                             vuuid=machine['uuid'],
                             name=vmname,
@@ -279,10 +235,14 @@ def update_model(option, **kwargs):  # Mirar como acturalizar
                             VHost_id=item.id,
                             OsType_id=os.id,
                             Datastore_id=ds.id,
-                            rdport=vbox_info(option="vm_rdport", vm=vmname),
+                            rdport=vrde_data['port'],
+                            rdpuser=vrde_data['user'],
+                            rdppass=vrde_data['pass'],
                             VSwitch = vsw,
                         )
+
                         new_vm.save()
+
 
             elif item.VType.vendor == "VW":
 
@@ -296,6 +256,7 @@ def update_model(option, **kwargs):  # Mirar como acturalizar
 
                         vmname = machine['name']
                         vnic= esx_info(option="vm_nic",vhost=item,vmname=vmname)
+                        rem_data = esx_info(option="vm_vrde", vhost=item, vmname=vmname)
 
                         if VSwitch.objects.filter(VHost__id=item.id, name=vnic).exists():
                             vsw =VSwitch.objects.get(VHost__id=item.id, name=vnic)
@@ -307,10 +268,12 @@ def update_model(option, **kwargs):  # Mirar como acturalizar
                         vmachine.name = vmname
                         vmachine.cpu = esx_info(option="vm_ncpu", vhost=item, vuuid=vuuid)
                         vmachine.mem = esx_info(option="vm_mem", vhost=item, vuuid=vuuid)
-                        vmachine.rdport = esx_info(option="vm_rdport", vhost=item, vuuid=vuuid)
+                        #vmachine.rdport = int(rem_data['port'])
+                        #vmachine.rdppass=rem_data['passwd']
                         vmachine.state = esx_info(option="vm_state", vhost=item, vuuid=vuuid)
                         vmachine.VSwitch = vsw
                         vmachine.save()
+
 
                     else:
 
@@ -548,6 +511,7 @@ def update_model(option, **kwargs):  # Mirar como acturalizar
                         ds.save()
 
             elif item.VType.vendor == "VW":
+
                 dstore = esx_info(option="datastore",vhost=item)
 
                 for ds in dstore:
@@ -557,7 +521,6 @@ def update_model(option, **kwargs):  # Mirar como acturalizar
                         current_ds.dpath = ds['dpath']
                         current_ds.save()
                     else:
-
                         new_ds = Datastore(
                             name = ds['dname'],
                             dpath = ds['dpath'],
@@ -701,7 +664,12 @@ def update_db_init():
     update_model(option="vswitch")
     update_model(option="vmachines")
     update_model(option="medium")
-    update_model(option="remote")
+    #update_model(option="remote")
+
+
+
+
+
 
 
 

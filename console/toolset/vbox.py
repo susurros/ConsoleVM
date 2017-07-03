@@ -1,7 +1,9 @@
 import re
-from console.models import OsType, Datastore, VHost, VMachine, VDisk, Snapshot
-from .guacamole import Add_Client, Remove_Client
+from console.models import OsType, Datastore, VHost, VMachine, VDisk, Snapshot, VSwitch
+from .guacamole import Add_Client, Remove_Client, Console_Port
 from .ssh import execCMD, sshSession
+from .PyPass import PyPass
+from .RDesktop import Rdesktop
 
 def vbox_paser(option,data,**kwargs):
 
@@ -143,9 +145,10 @@ def vbox_paser(option,data,**kwargs):
 
     elif option == "vm_cfg":
         for line in data:
-            if line.split('=')[0] == "CfgFile":
-                bad_chars='"'
-                return re.sub(bad_chars,"",line.split('=')[1])  # cfg File
+            rx = re.search('CfgFile="(.+)"',line)
+            if rx:
+                cfg_file = re.match('CfgFile="(.+)"', line).group(1)
+                return  re.match('CfgFile="(.+)"', line).group(1)  # cfg File
 
     elif option == "vm_vdisk":
         for line in data:
@@ -185,11 +188,11 @@ def vbox_paser(option,data,**kwargs):
 
         return data
 
-    elif option == "vm_vrde":  
+    elif option == "vm_rdport":
         for line in data:
-            regex = re.search(r'.+="(TCP/Ports)"\svalue="(\d+)',line, re.M|re.I )
+            regex = re.search('.+="TCP\/Ports"\svalue="(\d+)',line)
             if regex:
-                return re.match(r'.+="(TCP/Ports)"\svalue="(\d+)',line, re.M|re.I).group(2)
+                return int(re.match(r'.+="TCP\/Ports"\svalue="(\d+)',line,).group(1))
 
     elif option == "rdppass":
         for line in data:
@@ -306,7 +309,6 @@ def vbox_info(option,**kwargs):
         cmdCLI = "vboxmanage list vms"
         return vbox_paser(option=option,data=execCMD(vhost=vhost,cmd=cmdCLI),vmname=vmname)
 
-
     # COMMANDS Virtual Machines  Data
 
     elif option == "vm_uptime":
@@ -335,10 +337,12 @@ def vbox_info(option,**kwargs):
         cmdCLI = "vboxmanage showvminfo " + vmname
         return vbox_paser(option=option,data=execCMD(vhost=vhost,cmd=cmdCLI))
 
-    elif option == "vm_vrde":
+    elif option == "vm_rdport":
+        print ("VRDE_info", vmname)
         cmdCLI = "vboxmanage showvminfo " + vmname + " --machinereadable"
         cfgfile = vbox_paser(option = "vm_cfg", data = execCMD(vhost=vhost,cmd=cmdCLI))
-        cmdCLI = "cat" + cfgfile
+        print("FIchero config",cfgfile)
+        cmdCLI = "cat " + cfgfile
         return vbox_paser(option=option,data=execCMD(vhost=vhost,cmd=cmdCLI))
 
     elif option == "vm_os":
@@ -437,6 +441,11 @@ def vbox_control(option,**kwargs):
 
 def vbox_create(vhost,vm):  #Decidir si lista o clase para mandar los parametros de la maquina virtual
 
+    pypass = PyPass()
+    remote_pass = pypass.run()
+    remote_user = "consoleVM"
+    remote_port = Console_Port(option="enable",vhost=vhost)
+
     ssh = sshSession(hostip = vhost.ipaddr, hostuser = vhost.user, userkey = vhost.sshkey, port=vhost.sshport)
     ssh.openSession()
 
@@ -498,15 +507,16 @@ def vbox_create(vhost,vm):  #Decidir si lista o clase para mandar los parametros
     cmdCLI = "VBoxManage modifyvm " + vm['name'] + " --vrdeauthtype external"
     ssh.addCommand(cmdCLI)
     #Create pass
-    cmdCLI = "VBoxManage internalcommands passwordhash " + vm['rdppass']
+    print ("Password_ ",remote_pass)
+    cmdCLI = "VBoxManage internalcommands passwordhash " + remote_pass
     passhash = vbox_paser(option="rdppass", data=execCMD(vhost=vhost, cmd=cmdCLI))
     print (passhash)
-    #ADD Remote VRDE USER and pass
-    cmdCLI = "VBoxManage setextradata " + vm['name'] + " VBoxAuthSimple/users/" + vm['rdpuser'] + " " + passhash
+    #ADD Console_Port VRDE USER and pass
+    cmdCLI = "VBoxManage setextradata " + vm['name'] + " VBoxAuthSimple/users/" + remote_user + " " + passhash
     ssh.addCommand(cmdCLI)
     cmdCLI = "VBoxManage modifyvm " + vm['name'] + " --vrde on"
     ssh.addCommand(cmdCLI)
-    cmdCLI = "VBoxManage modifyvm " + vm['name'] + " --vrdeport " + vm['rdpport']
+    cmdCLI = "VBoxManage modifyvm " + vm['name'] + " --vrdeport " + str(remote_port)
     ssh.addCommand(cmdCLI)
 
     log = ssh.execCMD()
@@ -527,9 +537,9 @@ def vbox_create(vhost,vm):  #Decidir si lista o clase para mandar los parametros
             VHost_id=vhost.id,
             OsType_id= OsType.objects.get(name=vm['ostype']).id,
             Datastore_id= Datastore.objects.get(dpath=vm['datastore']).id,
-            rdport=vm['rdpport'],
-            rdppass=vm['rdppass'],
-            rdpuser=vm['rdpuser'],
+            rdport=remote_port,
+            rdppass=remote_pass,
+            rdpuser=remote_user,
         )
 
         new_vm.save()
@@ -576,13 +586,13 @@ def vbox_modify(vhost,vm,data):
 
     nic = data['iface']
     if data['type'] == 'intnet':
-        ntype = "--inetnet --intnet1 " + data['net']
+        ntype = "inetnet --intnet1 " + data['net']
     elif data['iface'] == 'bridged':
-        ntype = "--bridged --bridgeadapter1 " + data['iface']
+        ntype = "bridged --bridgeadapter1 " + data['iface']
     else:
-        ntype = "--nat"
+        ntype = "nat"
 
-    cmdCLI = "VBoxManage modifyvm " + vm.name + "--nic1 " + ntype + " --nictype1 " + data['driver']
+    cmdCLI = "VBoxManage modifyvm " + vm.name + " --nic1 " + ntype + " --nictype1 " + data['driver']
     ssh.addCommand(cmdCLI)
     cmdCLI = "vboxmanage modifyvm " + vm.name + " --name " + data['name']
     ssh.addCommand(cmdCLI)
@@ -591,42 +601,16 @@ def vbox_modify(vhost,vm,data):
     log = ssh.execCMD()
     ssh.closeSession()
 
-
-    print ("RDPASS ", data ['rdppass'])
-    if not data['rdppass'] == "null" or not data['rpduser'] == "null" or not data['rdpport'] == "null":
-
-
-        print (data['rpduser'])
-
-        cmdCLI = "VBoxManage internalcommands passwordhash " + data['rdppass']
-        passhash = vbox_paser(option="rdppass", data=execCMD(vhost=vhost, cmd=cmdCLI))
-        print("HASG", passhash)
-        cmdCLI = "VBoxManage setextradata " + data['name'] + " VBoxAuthSimple/users/" + data['rpduser'] + " " + passhash
-        execCMD(vhost=vhost, cmd=cmdCLI)
-        cmdCLI = "vboxmanage modifyvm " + vm.name + " --rdport " + data['rdpport']
-        execCMD(vhost=vhost, cmd=cmdCLI)
-
-
-
-    else:
-        data['rdppass'] = None
-        data['rpduser'] = None
-        data['rdpport'] = None
-
-
     if vbox_info(option="get_uuid", vhost=vhost, vmname=data['name']):
         mod_vm = VMachine.objects.get(id=vm.id)
         mod_vm.name = data['name']
-        mod_vm.OsType.id = data['osid']
+        mod_vm.OsType = OsType.objects.get(id=data['osid'])
         mod_vm.cpu = data['cpu']
         mod_vm.mem = data['mem']
-        mod_vm.VSwitch.id = data['vswid']
-        mod_vm.rdport = data['rdpport']
-        mod_vm.rdppass = data['rdppass']
+        mod_vm.VSwitch = VSwitch.objects.get(id=data['vswid'])
         mod_vm.save()
 
-        Remove_Client(name=vm.name)
-        Add_Client(name=mod_vm.name,protocol="rdp", port=mod_vm.rdport, username=mod_vm.rdpuser, password=mod_vm.rdppass)
+        print ("Cambios", mod_vm.OsType.name, mod_vm.cpu, " ", mod_vm.mem)
 
 
         return True
@@ -642,6 +626,8 @@ def vbox_delete_vm(vhost,vm):
     print (vbox_info(option="get_uuid",vhost=vhost,vmname=vm.name))
     if not vbox_info(option="get_uuid",vhost=vhost,vmname=vm.name):
         vmdel = VMachine.objects.get(id=vm.id)
+        print("MAquina",vmdel.name, "Puerto",vmdel.rdport)
+        Console_Port(option="disable",vhost=vhost,rdport=vmdel.rdport)
         vmdel.delete()
 
         Remove_Client(name=vm.name)
@@ -651,9 +637,37 @@ def vbox_delete_vm(vhost,vm):
         return False
 
 def vbox_clone(vhost,vm,clone_name):
+
+    pypass = PyPass()
+    remote_pass = pypass.run()
+    remote_user = "consoleVM"
+    remote_port = Console_Port(option="enable",vhost=vhost)
+
+    ssh = sshSession(hostip = vhost.ipaddr, hostuser = vhost.user, userkey = vhost.sshkey, port=vhost.sshport)
+    ssh.openSession()
     
     cmdCLI = "vboxmanage clonevm " + vm.vuuid + " --mode machine --name " + clone_name + " --basefolder " + vm.Datastore.dpath  + " --register"
-    execCMD(vhost=vhost, cmd=cmdCLI)
+    ssh.addCommand(cmdCLI)
+    ##Enamble VRDE AUTH
+    cmdCLI = "VBoxManage modifyvm " + clone_name + " --vrdeauthtype external"
+    ssh.addCommand(cmdCLI)
+    # Create pass
+    print("PASSOED",remote_pass)
+    cmdCLI = "VBoxManage internalcommands passwordhash " + remote_pass
+    passhash = vbox_paser(option="rdppass", data=execCMD(vhost=vhost, cmd=cmdCLI))
+    print(passhash)
+    # ADD Console_Port VRDE USER and pass
+    cmdCLI = "VBoxManage setextradata " + clone_name + " VBoxAuthSimple/users/" + remote_user + " " + passhash
+    ssh.addCommand(cmdCLI)
+    cmdCLI = "VBoxManage modifyvm " + clone_name + " --vrde on"
+    ssh.addCommand(cmdCLI)
+    cmdCLI = "VBoxManage modifyvm " + clone_name + " --vrdeport " + str(remote_port)
+    ssh.addCommand(cmdCLI)
+
+    log = ssh.execCMD()
+    ssh.closeSession()
+
+
 
     os = OsType.objects.filter(VType__id=vhost.VType.id).get(name=vbox_info(option="vm_os", vhost=vhost, vmname=clone_name))
     dpath = vbox_info(option="vm_path", vhost=vhost, vmname=clone_name)
@@ -667,10 +681,10 @@ def vbox_clone(vhost,vm,clone_name):
         VHost_id=vhost.id,
         OsType_id=os.id,
         Datastore_id=ds.id,
-        rdport=vbox_info(option="vm_rdport", vm=clone_name),
+        rdport=remote_port,
         VSwitch_id = vm.VSwitch.id,
-        rdpass = vm.rdppass,
-        rdpuser = vm.rdpuser,
+        rdppass= remote_pass,
+        rdpuser = remote_user,
     )
     new_vm.save()
 
@@ -747,3 +761,39 @@ def vbox_snapshots(option,vhost,vm,**kwargs):
             return True
         else:
             return False
+
+def vbox_vrde(vmname,vhost):
+
+    pypass = PyPass()
+    remote_pass = pypass.run()
+    remote_user = "consoleVM"
+    remote_port = Console_Port(option="enable",vhost=vhost)
+
+    ssh = sshSession(hostip = vhost.ipaddr, hostuser = vhost.user, userkey = vhost.sshkey, port=vhost.sshport)
+    ssh.openSession()
+
+    ##Enamble VRDE AUTH
+    cmdCLI = "VBoxManage modifyvm " + vmname + " --vrdeauthtype external"
+    ssh.addCommand(cmdCLI)
+    # Create pass
+    cmdCLI = "VBoxManage internalcommands passwordhash " + remote_pass
+    passhash = vbox_paser(option="rdppass", data=execCMD(vhost=vhost, cmd=cmdCLI))
+
+    # ADD Console_Port VRDE USER and pass
+    cmdCLI = "VBoxManage setextradata " + vmname + " VBoxAuthSimple/users/" + remote_user + " " + passhash
+    ssh.addCommand(cmdCLI)
+    cmdCLI = "VBoxManage modifyvm " + vmname + " --vrde on"
+    ssh.addCommand(cmdCLI)
+    cmdCLI = "VBoxManage modifyvm " + vmname + " --vrdeport " + str(remote_port)
+    ssh.addCommand(cmdCLI)
+
+    log = ssh.execCMD()
+    ssh.closeSession()
+
+    vrde_data={
+        'user' : remote_user,
+        'pass' : remote_pass,
+        'port' : remote_port
+    }
+
+    return vrde_data

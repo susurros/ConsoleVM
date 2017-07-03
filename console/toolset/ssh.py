@@ -43,9 +43,6 @@ class sshSession:
         self.cmd = []
         return cmdlog
 
-
-
-
 def execCMD(vhost,cmd):
 
     try:
@@ -81,7 +78,6 @@ def execCMD(vhost,cmd):
         traceback.print_exc()
 
 def execSFTP(vhost,remote_path,local_path,method):
-
 
     try:
 

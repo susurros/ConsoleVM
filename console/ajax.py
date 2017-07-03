@@ -466,10 +466,10 @@ def modify_vm(request):
                 "isolist": json.dumps(isolist),
                 "drivers": drivers,
                 "vendor": vm.VHost.VType.vendor,
-                "rdpuser": vm.rdpuser,
-                "rdppass": vm.rdppass,
-                "rdpport": vm.rdport,
+
             }
+
+
 
             print ("VM DATA",data)
             return JsonResponse(data)
@@ -496,9 +496,6 @@ def modify_vm(request):
                 'osid': int(escape(request.POST.get('osid'))),
                 'osname': current_os.name,
                 'net': vsw.name,
-                'rpduser': request.POST.get('rpduser'),
-                'rdppass': request.POST.get('rdppass'),
-                'rdpport': request.POST.get('rdpport'),
             }
 
             if vm.state == "PW":
@@ -509,6 +506,7 @@ def modify_vm(request):
 
                     print (vmdata)
                     if vbox_modify(vhost=vm.VHost,vm=vm,data=vmdata):
+                        update_model(option="vmachines")
                         data = {'msg': "The Virtual Machine " + vm.name + " has been modified"}
                         return JsonResponse(data)
                     else:

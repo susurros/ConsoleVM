@@ -26,7 +26,7 @@ def form_vm(request):
 
     if request.is_ajax() and request.POST:
 
-        dstore  = Datastore.objects.get(id=int(request.POST.get('datastore')))
+        dstore = Datastore.objects.get(id=int(request.POST.get('datastore')))
         os = OsType.objects.get(id=int(escape(request.POST.get('ostype'))))
         vsw = VSwitch.objects.get(id=int(escape(request.POST.get('vswitch'))))
 
@@ -56,8 +56,6 @@ def form_vm(request):
                 vmdata['type']=vsw.type
                 vmdata['iface']=vsw.phy_iface
                 vmdata['net']=vsw.name
-                vmdata['rdpuser'] = escape(request.POST.get('rdpuser'))
-                vmdata['rdppass'] = escape(request.POST.get('rdppass'))
                 vmdata['image'] = escape(request.POST.get('image'))
 
 
@@ -77,7 +75,7 @@ def form_vm(request):
 
             elif VH.VType.vendor == "VW":
 
-                vmdata['rdppass'] = escape(request.POST.get('rdppass'))
+                vmdata['vsw_id']=vsw.id
                 msg = esx_create_vm(vhost=VH,vm=vmdata)
 
                 if msg == "OK":

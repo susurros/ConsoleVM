@@ -2,10 +2,8 @@ import re
 from console.models import OsType, Datastore, VHost, VMachine,  VDisk, Snapshot
 from .ssh import execCMD, sshSession, execSFTP
 from DjangoWeb.settings import BASE_DIR
-from .guacamole import Add_Client, Modify_Client, Remove_Client
-
-
-
+from .guacamole import Add_Client, Remove_Client, Console_Port
+from .PyPass import PyPass
 
 '''
 Bibilio
@@ -567,6 +565,10 @@ def esx_control(option,**kwargs):
 
 def esx_create_vm(vhost,vm):
 
+    pypass = PyPass()
+    remote_pass = pypass.run()
+    remote_port = Console_Port(option="enable",vhost=vhost)
+
     #Load Env Variables
     file_tmp = "/tmp"
 
@@ -619,8 +621,8 @@ def esx_create_vm(vhost,vm):
             line.append('pciBridge7.functions = "8"')
             line.append('guestOS = "' + vm['ostype'] + '"')
             line.append('RemoteDisplay.vnc.enabled = True')
-            line.append('RemoteDisplay.vnc.port = "'+ vm['rdpport'] +'"')
-            line.append('RemoteDisplay.vnc.password = "'+ vm['rdppass'] +'"')
+            line.append('RemoteDisplay.vnc.port = "'+ str(remote_port) +'"')
+            line.append('RemoteDisplay.vnc.password = "'+ remote_pass +'"')
 
             vm_file = vm['name'] + ".vmx"
             filename = file_tmp + "/" + vm_file
@@ -654,29 +656,18 @@ def esx_create_vm(vhost,vm):
                 if esx_info(option="vm_dir",vhost=vhost,vmdir=vm_dir):
                     if esx_info(option="vm_file", vhost=vhost, vmfile=vm_file, vmdir=vm_dir):
                         if esx_info(option="vm_disk", vhost=vhost, vmdisk=dpath,vuuid=vuuid):
-                            if vm['rdpport']:
-                                new_vm = VMachine(
-                                    vuuid=vuuid,
-                                    name=vm['name'],
-                                    cpu=vm['cpu'],
-                                    mem=vm['mem'],
-                                    VHost_id=vhost.id,
-                                    OsType_id=OsType.objects.get(name=vm['ostype']).id,
-                                    Datastore_id=Datastore.objects.get(dpath=vm['datastore']).id,
-                                    rdport=vm['rdpport'],
-                                    rdppass=vm['rdppass']
-                                )
-                            else:
-                                new_vm = VMachine(
-                                    vuuid=vuuid,
-                                    name=vm['name'],
-                                    cpu=vm['cpu'],
-                                    mem=vm['mem'],
-                                    VHost_id=vhost.id,
-                                    OsType_id=OsType.objects.get(name=vm['ostype']).id,
-                                    Datastore_id=Datastore.objects.get(dpath=vm['datastore']).id,
-                                )
-
+                            new_vm = VMachine(
+                                vuuid=vuuid,
+                                name=vm['name'],
+                                cpu=vm['cpu'],
+                                mem=vm['mem'],
+                                VHost_id=vhost.id,
+                                OsType_id=OsType.objects.get(name=vm['ostype']).id,
+                                Datastore_id=Datastore.objects.get(dpath=vm['datastore']).id,
+                                VSwitch_id=vm['vsw_id'],
+                                rdport=remote_port,
+                                rdppass=remote_pass
+                            )
 
                             new_vm.save()
 
@@ -688,7 +679,7 @@ def esx_create_vm(vhost,vm):
 
                             new_dsk.save()
 
-                            Add_Client(name=new_vm.name, protocol="vnc", port = new_vm.rdport, username = new_vm.rdpuser, password = new_vm.rdppass, hostname = vhost.ipaddr)
+                            Add_Client(name=new_vm.name, protocol="vnc", port = new_vm.rdport, password = new_vm.rdppass, hostname = vhost.ipaddr)
 
                             return "OK"
 
@@ -704,6 +695,9 @@ def esx_create_vm(vhost,vm):
 def esx_create_net(vhost,pg_name,vswitch):
 
     cmdCLI = "vim-cmd hostsvc/net/portgroup_add " + vswitch + " " + pg_name
+
+    print ("COMAND ". cmdCLI)
+
     execCMD(vhost=vhost, cmd=cmdCLI)
 
     if esx_info(option="port_group_exists",vhost=vhost,portgroup=pg_name):
@@ -723,6 +717,10 @@ def esx_delete_net(vhost_id,pg_name,vswitch):
         return True
 
 def esx_modify(vhost,vm,data):
+
+    pypass = PyPass()
+    remote_pass = pypass.run()
+    remote_port = Console_Port(option="enable",vhost=vhost)
 
 
     ssh = sshSession(hostip=vhost.ipaddr, hostuser=vhost.user, userkey=vhost.sshkey, port=vhost.sshport)
@@ -795,8 +793,8 @@ def esx_modify(vhost,vm,data):
         line.append('pciBridge7.functions = "8"')
         line.append('guestOS = "' + data['osname'] + '"')
         line.append('RemoteDisplay.vnc.enabled = True')
-        line.append('RemoteDisplay.vnc.port = "' + data['rdpport'] + '"')
-        line.append('RemoteDisplay.vnc.password = "' + data['rdppass'] + '"')
+        line.append('RemoteDisplay.vnc.port = "' + str(remote_port) + '"')
+        line.append('RemoteDisplay.vnc.password = "' + remote_pass + '"')
 
         filename = file_tmp + "/" + mod_file
         target = open(filename, 'w')
@@ -818,17 +816,21 @@ def esx_modify(vhost,vm,data):
         ssh.execCMD()
         ssh.closeSession()
 
+        print("Cambio_OS", OsType.objects.get(name=data['osname']).id, OsType.objects.get(name=data['osname']).name)
+
+        ostype = OsType.objects.get(name=data['osname'])
+
         vuuid = esx_info(option="get_uuid", vhost=vhost,vmname=data['name'])
         if vuuid:
             mod_vm = VMachine.objects.get(id=vm.id)
             mod_vm.vuuid = vuuid
             mod_vm.name = data['name']
-            mod_vm.OsType.id = data['osid']
+            mod_vm.OsType = ostype
             mod_vm.cpu = data['cpu']
             mod_vm.mem = data['mem']
             mod_vm.VSwitch.id = data['vswid']
-            mod_vm.rdport = data['rdpport']
-            mod_vm.rdppass = data['rdppass']
+            mod_vm.rdport = remote_port
+            mod_vm.rdppass = remote_pass
             mod_vm.save()
 
             Remove_Client(name=vm.name)
@@ -848,6 +850,7 @@ def esx_delete_vm(vhost,vm):
         dstore = Datastore.objects.get(id=vmdel.Datastore.id)
         cmdCLI ="rm -rf "+ dstore.dpath + "/" + vm.name
         execCMD(vhost=vhost, cmd=cmdCLI)
+        Console_Port(option="disable",vhost=vhost,rdport=vmdel.rdport)
         vmdel.delete()
 
         Remove_Client(name=vm.name)
@@ -861,6 +864,12 @@ def esx_clone(vhost,vm,clone_name):
     #https://communities.vmware.com/message/2412308
     #http://virtuallyhyper.com/2012/04/cloning-a-vm-from-the-command-line/
     #http://collisionresistanthashfunction.blogspot.com.es/2013/10/clone-vm-from-command-line-in-vmware.html
+
+    pypass = PyPass()
+    remote_pass = pypass.run()
+    remote_port = Console_Port(option="enable",vhost=vhost)
+
+    print ("Remote PORt", remote_port)
 
 
     ssh = sshSession(hostip = vhost.ipaddr, hostuser = vhost.user, userkey = vhost.sshkey, port=vhost.sshport)
@@ -879,15 +888,23 @@ def esx_clone(vhost,vm,clone_name):
 
     # Copy VMX File
     cl_file = clone_name + ".vmx"
+    tmp_cfg = vm_dir + "/" + clone_name + "_tmp.vmx"
     cl_cfg = vm_dir + "/" + clone_name + ".vmx"
     cmdCLI = "cp " + ori_cfg + " " + ori_cfg + ".old"
+
     ssh.addCommand(cmdCLI)
 
 
     # Modify
     # SUBstitute olonave with clone_name
-    cmdCLI ="sed -e s/" + vm.name + "/" + clone_name + "/g " + ori_cfg + ">>" + cl_cfg
+    cmdCLI ="sed -e s/" + vm.name + "/" + clone_name + "/g " + ori_cfg + ">" + tmp_cfg
     ssh.addCommand(cmdCLI)
+
+    #Change Remote Parameters
+    #cmdCLI = "sed -e s/" + str(vm.rdport) + "/" + str(remote_port) + "/g " + tmp_cfg + ">" + cl_cfg
+    #ssh.addCommand(cmdCLI)
+    #cmdCLI = "sed -e s/" + vm.rdppass + "/" + remote_pass + "/g " + tmp_cfg + ">" + cl_cfg
+    #ssh.addCommand(cmdCLI)
 
     # Create DISK
     ori_disk = vm.Datastore.dpath + "/" + vm.name + "/" + vm.name + ".vmdk"
@@ -903,7 +920,9 @@ def esx_clone(vhost,vm,clone_name):
     ssh.execCMD()
     ssh.closeSession()
 
+
     print("OS id", vm.OsType.id)
+    print("SWthich", vm.VSwitch.id)
 
     vuuid = esx_info(option="get_uuid", vhost=vhost, vmname=clone_name)
 
@@ -922,8 +941,8 @@ def esx_clone(vhost,vm,clone_name):
                         OsType_id=vm.OsType.id,
                         Datastore_id=vm.Datastore.id,
                         VSwitch_id=vm.VSwitch.id,
-                        rdport=vm.rdport,
-                        rdpass=vm.rdppass,
+                        rdport=remote_port,
+                        rdppass=remote_pass,
                     )
 
                     new_vm.save()
@@ -937,7 +956,7 @@ def esx_clone(vhost,vm,clone_name):
 
                     new_dsk.save()
 
-                    Add_Client(name=new_vm.name, protocol="vnc", port=new_vm.rdport, username=new_vm.rdpuser,
+                    Add_Client(name=new_vm.name, protocol="vnc", port=new_vm.rdport,
                                password=new_vm.rdppass, hostname=vhost.ipaddr)
 
                     return True

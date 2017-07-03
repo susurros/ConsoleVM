@@ -159,6 +159,7 @@ class Remote_Admin(models.Model):
     id = models.AutoField(primary_key=True)
     VHost = models.ForeignKey(VHost)
     rdport = models.PositiveIntegerField(null=True)
+    used = models.BooleanField(default=False)
 
 # Model Logs
 
@@ -166,8 +167,6 @@ class Log(models.Model):
 
     id = models.AutoField(primary_key=True)
     message = models.CharField(max_length=255, blank=True, null=True)
-
-
 
 
 '''

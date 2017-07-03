@@ -61,6 +61,7 @@ $(document).ready(function(){
             "dataType": 'json',
             "success":function(data){
                 var vhost = JSON.parse(data.vhosts)
+                $("#id_VHost").append("<option value='0'>--- Select  ----</option>")
                 for (key in vhost){
                     $("#id_VHost").append("<option value='" + vhost[key].id + "'>" + vhost[key].name + "</option>");
                 }

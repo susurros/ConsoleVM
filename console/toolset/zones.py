@@ -2,7 +2,8 @@ import re
 from console.models import OsType, Datastore, VHost, VMachine, VDisk
 from .ssh import execCMD, sshSession,execSFTP
 from DjangoWeb.settings import BASE_DIR
-from .guacamole import Add_Client, Modify_Client, Remove_Client
+from .guacamole import Add_Client, Remove_Client, Console_Port
+
 
 
 
@@ -72,6 +73,7 @@ def zone_parser(option,data,**kwargs):
         dslist = []
         for line in data:
             rx = re.search('(.+)\s;\s(.+)',line)
+            print(rx)
             if rx:
                 vmname = re.match('(.+)\s;\s(.+)',line).group(1)
                 dpath = re.sub('/'+vmname,'',re.match('(.+)\s;\s(.+)',line).group(2))
@@ -90,6 +92,7 @@ def zone_parser(option,data,**kwargs):
                                 'dpath': dpath,
                             }
                             dslist.append(data)
+        print(dslist)
         return dslist
 
     #Commands Info_Zones
@@ -220,8 +223,6 @@ def zone_parser(option,data,**kwargs):
             rx = re.search('.+\s;\s(.+)',line)
             if rx:
                 return re.match('.+\s;\s(.+)',line).group(1)
-
-
 
 def zone_info(option,**kwargs):
     '''
@@ -356,7 +357,6 @@ def zone_info(option,**kwargs):
         cmdCLI = 'dladm show-link | grep ' + vmname + ' | awk ' + "'{print $1," + '";"' + ",$5}'"
         return zone_parser(option=option, data=execCMD(vhost=vhost, cmd=cmdCLI))
 
-
 def zone_control(option,**kwargs):
 
     '''
@@ -462,19 +462,6 @@ def zone_create_vm(vhost,vm):
     ssh.addCommand(cmdCLI)
 
 
-    #Remote Access
-    cmdCLI = "cp -p /root/.ssh/ " + dpath + "/root/root"
-    ssh.addCommand(cmdCLI)
-
-    cmdCLI = "cp -p /etc/ssh/sshd_config " +  dpath + "/root/etc/ssh/sshd_config"
-    ssh.addCommand(cmdCLI)
-
-    if not vm['rdpport'] == "22":
-        cmdCLI = 'echo "Port ' + vm['rdpport'] +'" >> '  +  dpath + "/root/etc/ssh/sshd_config"
-        ssh.addCommand(cmdCLI)
-
-
-
     log = ssh.execCMD()
 
     ssh.closeSession()
@@ -503,9 +490,6 @@ def zone_create_vm(vhost,vm):
         )
 
         new_dsk.save()
-
-        Add_Client(name=new_vm.name,protocol="ssh", port=new_vm.rdport, username=new_vm.rdpuser, password=new_vm.rdppass, hostname=vhost.ipaddr)
-
 
         return True
     else:
@@ -540,6 +524,8 @@ def zone_delete_vm(vhost,vm):
 def zone_clone(vhost,vm,clone_name):
 
     #https://docs.oracle.com/cd/E23824_01/html/821-1460/gbwmc.html
+
+    remote_port = Console_Port(option="enable",vhost=vhost)
 
     ssh = sshSession(hostip = vhost.ipaddr, hostuser = vhost.user, userkey = vhost.sshkey, port=vhost.sshport)
     ssh.openSession()
@@ -578,8 +564,14 @@ def zone_clone(vhost,vm,clone_name):
     cmdCLI = 'zoneadm -z ' + clone_name + ' clone ' + vm.name
     ssh.addCommand(cmdCLI)
 
+    cmdCLI = "zoneadm -z " + vm.name + " rename " + clone_name
+    ssh.addCommand(cmdCLI)
+
 
     print (ssh.showCommand())
+
+
+
 
     log = ssh.execCMD()
     ssh.closeSession()
@@ -601,8 +593,6 @@ def zone_clone(vhost,vm,clone_name):
         )
 
         new_vm.save()
-
-        Add_Client(name=new_vm.name,protocol="ssh", port=new_vm.rdport, username=new_vm.rdpuser, password=new_vm.rdppass, hostname=vhost.ipaddr)
 
         return True
 
@@ -679,14 +669,6 @@ def zone_modify(vhost,vm,data):
     ssh.addCommand(cmdCLI)
 
 
-    ## RDP SSH
-    dpath = vm.Datastore.dpath + "/" + vm.name
-    cmdCLI = 'cp -rp ' + dpath + "/root/etc/ssh/sshd_config " +dpath + "/root/etc/ssh/sshd_config.bck"
-    ssh.addCommand(cmdCLI)
-    cmdCLI = 'sed -e "s/Port ' + vm.rdport + '/Port ' + data['rdport'] + '/g" ' + dpath + '/root/etc/ssh/sshd_config > '  + dpath + '/root/etc/ssh/sshd_config'
-    ssh.addCommand(cmdCLI)
-
-
     cmdCLI = "zoneadm -z " + vm.name + " rename " + data['name']
     ssh.addCommand(cmdCLI)
     ssh.execCMD()
@@ -701,19 +683,10 @@ def zone_modify(vhost,vm,data):
         mod_vm.cpu = int(data['cpu'])
         mod_vm.mem = int(data['mem'])
         mod_vm.VSwitch.id = data['vswid']
-        print (data['rdpport'])
-        if not data['rdpport'] == "null":
-            mod_vm.rdport = int(data['rdpport'])
-        else:
-            mod_vm.rdport = 22
-
-        mod_vm.rdppass = data['rdppass']
         mod_vm.save()
 
-        Remove_Client(name=vm.name)
-        Add_Client(name=mod_vm.name, protocol="ssh", port=mod_vm.port, username=mod_vm.rdpuser,
-                   password=mod_vm.rdppass)
 
+        print ("Cambios", mod_vm.cpu, " ", mod_vm.mem)
         print("DE MOD")
 
         return True

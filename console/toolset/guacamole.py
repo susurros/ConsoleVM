@@ -1,10 +1,11 @@
+import random
 from DjangoWeb.settings import BASE_DIR
 from xml.etree import ElementTree as ET
+from console.models import VHost,VType, VMachine,   Datastore, OsType, Snapshot, Remote_Admin, VSwitch, Medium
 
 #http://mussol.org/2013/07/26/parsing-and-building-xml-files-with-python/
 
 conf_file = BASE_DIR + "/console/toolset/cfg/noauth-config.xml"
-
 
 def Remove_Client(name):
 
@@ -20,11 +21,12 @@ def Remove_Client(name):
 
     xml_conf.write(conf_file)
 
-
 def Add_Client(name,protocol,hostname,port,password,**kwargs):
 
     if kwargs.get('username'):
-         username = kwargs['username']
+        username = kwargs['username']
+
+
 
     xml_conf =  ET.parse(conf_file)
     xml_root = xml_conf.getroot()
@@ -51,7 +53,6 @@ def Add_Client(name,protocol,hostname,port,password,**kwargs):
             new_client.append(new_param)
     xml_root.append(new_client)
     xml_conf.write(conf_file)
-
 
 def Modify_Client(name, **kwargs):
     '''
@@ -106,6 +107,36 @@ def Modify_Client(name, **kwargs):
 
     xml_conf.write(conf_file)
 
+def Console_Port(option,vhost,**kwargs):
+
+    if kwargs.get('rdport'):
+        remote_port = kwargs['rdport']
+        print ("Puerto Remote", remote_port)
+
+
+    if option == "enable":
+        OK_port = False
+        while not OK_port:
+            remote_port = random.randint(60000,65000)
+
+            print ("PUERTO", remote_port)
+
+            if not Remote_Admin.objects.filter(VHost_id=vhost.id, rdport=remote_port).exists():
+
+                print ("Ceando nuvo pierto")
+                new_port = Remote_Admin(
+                    VHost=vhost,
+                    rdport=remote_port,
+                    used=True,
+                )
+
+                print (new_port.VHost.id)
+                new_port.save()
+            return new_port.rdport
+    elif option == "disable":
+        dis_port = Remote_Admin.objects.get(VHost_id=vhost.id, rdport=remote_port)
+        dis_port.delete()
+        return True
 
 def Update_Model(list_machines):
 
@@ -118,5 +149,3 @@ def Update_Model(list_machines):
             Add_Client(name=item.name, protocol="rdp", hostname=item.VHost.ipaddr, port=item.rdport, username=item.rdpuser,password=item.rdppass)
         elif item.VHost.VType.vendor == "VW":
             Add_Client(name=item.name, protocol="vnc", hostname=item.VHost.ipaddr, port=item.rdport, password=item.rdppass)
-        elif item.VHost.VType.vendor == "ZN":
-            Add_Client(name=item.name, protocol="ssh",hostname=item.VHost.ipaddr, port=item.rdport, username= item.rdpuser, password= item.rdppass)
