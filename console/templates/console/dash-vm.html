@@ -80,14 +80,16 @@
                                    {% endif %}
                                    <input type="button" id="stop_vm" class="btn btn-warning" value="Stop">
                                 </div>
-
+                                {%  if not  machine.VHost.VType.vendor == "VW" %}
                                <div class="btn-group btn-group-xs" id="chg_button_{{ machine.id }}">
+
                                    {% csrf_token %}
                                    <input type="hidden" id="vmid" name="vmid" value='{{machine.id}}'>
                                    <input type="button" id="clone_vm" class="btn bg-olive" value="Clone">
                                    <input type="button" id="modify_vm" class="btn bg-maroon" value="Modify">
                                    <input type="button" id="delete_vm" class="btn btn-danger" value="Delete">
                                </div>
+                               {%  endif %}
                                {% if not machine.VHost.VType.vendor == "ZN" %}
                                 <div class="btn-group btn-group-xs" id="snap_butons_{{ machine.id }}">
                                    {% csrf_token %}
@@ -95,6 +97,8 @@
                                    <input type="button" id="mk_snap" class="btn bg-olive" value="New Snapshot">
                                    <input type="button" id="mng_snap" class="btn bg-navy" value="Snapshot Manager">
                                 </div>
+                               {% endif %}
+                                {% if not machine.VHost.VType.vendor == "VW" %}
                                 <div class="btn-group btn-group-xs" id="console_{{ machine.id }}">
                                     <input type="hidden" id="vmid" name="vmid" value='{{machine.id}}'>
                                     <button id="btn_console" class="btn btn-info">

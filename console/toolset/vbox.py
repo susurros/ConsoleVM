@@ -745,13 +745,20 @@ def vbox_snapshots(option,vhost,vm,**kwargs):
 
         print (cmdCLI)
 
-        for snap in vbox_info(option="snap_list", vhost=vhost, vmname=vm.name):
-            if snap['uuid'] == suuid:
-                return False
-            else:
-                snap = Snapshot.objects.get(suuid=suuid)
-                snap.delete()
-                return True
+        snaplist = vbox_info(option="snap_list", vhost=vhost, vmname=vm.name)
+        if not snaplist:
+            snap = Snapshot.objects.get(suuid=suuid)
+            snap.delete()
+            return True
+        else:
+            for snap in vbox_info(option="snap_list", vhost=vhost, vmname=vm.name):
+
+                if snap['uuid'] == suuid:
+                    return False
+                else:
+                    snap = Snapshot.objects.get(suuid=suuid)
+                    snap.delete()
+                    return True
         
     elif option == "snap_restore":
         cmdCLI = "vboxmanage snapshot " + vm.vuuid + " restore " + suuid

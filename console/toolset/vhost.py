@@ -3,7 +3,7 @@ from .ssh import execCMD, sshSession
 from .vbox import vbox_info, vbox_vrde
 from .esx import esx_info
 from .zones import zone_info
-from .guacamole import Update_Model
+from .guacamole import Update_Remote
 from console.models import VHost,VType, VMachine,   Datastore, OsType, Snapshot, Remote_Admin, VSwitch, Medium
 
 
@@ -243,7 +243,6 @@ def update_model(option, **kwargs):  # Mirar como acturalizar
 
                         new_vm.save()
 
-
             elif item.VType.vendor == "VW":
 
                 list_machines_local = esx_info(option="list_all", vhost=item)
@@ -374,6 +373,7 @@ def update_model(option, **kwargs):  # Mirar como acturalizar
                         new_vm.save()
 
             db_machines = VMachine.objects.filter(VHost__id=item.id)
+
             for db_machine in db_machines:
 
                 if item.VType.vendor == "VB":
@@ -398,11 +398,11 @@ def update_model(option, **kwargs):  # Mirar como acturalizar
                         os = OsType(name=data['id'], desc=data['desc'], VType=item.VType)
                         os.save()
 
-            elif item.VType.vendor == "VW":
-                for data in esx_info(option="ostypes", vhost=item):
-                    if not OsType.objects.filter(name=data['id'], VType=item.VType).exists():
-                        os = OsType(name=data['id'], desc=data['desc'], VType=item.VType)
-                        os.save()
+            #elif item.VType.vendor == "VW":
+            #    for data in esx_info(option="ostypes", vhost=item):
+            #        if not OsType.objects.filter(name=data['id'], VType=item.VType).exists():
+            #            os = OsType(name=data['id'], desc=data['desc'], VType=item.VType)
+            #            os.save()
 
             else:
                 for data in zone_info(option="ostypes", vhost=item):
@@ -653,9 +653,8 @@ def update_model(option, **kwargs):  # Mirar como acturalizar
 
         VM = VMachine.objects.all()
 
-        Update_Model(list_machines=VM)
-        #for item in VM:
-         #   Update_Model(vm=item)
+        Update_Remote(list_machines=VM)
+
 
 def update_db_init():
     update_model(option="ostypes")
@@ -664,7 +663,7 @@ def update_db_init():
     update_model(option="vswitch")
     update_model(option="vmachines")
     update_model(option="medium")
-    #update_model(option="remote")
+    update_model(option="remote")
 
 
 

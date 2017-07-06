@@ -482,6 +482,8 @@ def zone_create_vm(vhost,vm):
 
         new_vm.save()
 
+        Add_Client(name=new_vm.name,protocol="ssh",hostname=vhost.ipaddr,port=vhost.sshport,password="test",username=vhost.user)
+
 
         new_dsk = VDisk (
             name = vm['name'],
@@ -516,6 +518,7 @@ def zone_delete_vm(vhost,vm):
 
     if not zone_info(option="get_uuid", vhost=vhost, vmname=vm.name):
         vmdel = VMachine.objects.get(id=vm.id)
+        Remove_Client(name=vmdel.name)
         vmdel.delete()
         return True
     else:
@@ -591,6 +594,8 @@ def zone_clone(vhost,vm,clone_name):
             Datastore_id=vm.Datastore.id,
             VSwitch_id=vm.VSwitch.id,
         )
+
+        Add_Client(name=new_vm.name,protocol="ssh",hostname=vhost.ipaddr,port=vhost.sshport,password="test",username=vhost.user)
 
         new_vm.save()
 
@@ -685,6 +690,8 @@ def zone_modify(vhost,vm,data):
         mod_vm.VSwitch.id = data['vswid']
         mod_vm.save()
 
+        Remove_Client(name=vm.name)
+        Add_Client(name=mod_vm.name,protocol="ssh",hostname=vhost.ipaddr,port=vhost.sshport,password="test",username=vhost.user)
 
         print ("Cambios", mod_vm.cpu, " ", mod_vm.mem)
         print("DE MOD")

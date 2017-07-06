@@ -138,13 +138,21 @@ def Console_Port(option,vhost,**kwargs):
         dis_port.delete()
         return True
 
-def Update_Model(list_machines):
+def Update_Remote(list_machines):
 
- #   xml_conf = ET.parse(conf_file)
-#    xml_root = xml_conf.getroot()
+    target = open(conf_file, 'w')
+    target.truncate()
+
+    line = []
+    line.append("<configs>")
+    line.append("</configs>")
+
+    for item in line:
+        target.write(item)
+        target.write("\n")
+    target.close()
 
     for item in list_machines:
-        Remove_Client(item.name)
         if item.VHost.VType.vendor == "VB":
             Add_Client(name=item.name, protocol="rdp", hostname=item.VHost.ipaddr, port=item.rdport, username=item.rdpuser,password=item.rdppass)
         elif item.VHost.VType.vendor == "VW":

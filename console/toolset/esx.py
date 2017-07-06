@@ -531,7 +531,8 @@ def esx_control(option,**kwargs):
 
     elif option =="pause_vm":
         if esx_info(option="vm_state",vhost=vhost,vuuid=vmachine.vuuid) == 'PA':
-            cmdCLI = "vim-cmd vmsvc/power.suspendResume " + vmachine.vuuid
+            #cmdCLI = "vim-cmd vmsvc/power.suspendResume " + vmachine.vuuid
+            cmdCLI = "vim-cmd vmsvc/power.on " + vmachine.vuuid
             execCMD(vhost=vhost, cmd=cmdCLI)
             vmachine.state = esx_info(option="vm_state", vhost=vhost, vuuid=vmachine.vuuid)
             vmachine.uptime = esx_info(option="vm_uptime", vhost=vhost, vuuid=vmachine.vuuid)
@@ -1003,13 +1004,20 @@ def esx_snapshots(option,vhost,vm,**kwargs):
         cmdCLI = "vim-cmd vmsvc/snapshot.remove " + vm.vuuid + " " + suuid
         execCMD(vhost=vhost, cmd=cmdCLI)
         print (cmdCLI)
-        for snap in esx_info(option="snap_list", vhost=vhost, vuuid=vm.vuuid):
-            if snap['uuid'] == suuid:
-                return False
-            else:
-                snap = Snapshot.objects.get(suuid=suuid)
-                snap.delete()
-                return True
+        snaplist = esx_info(option="snap_list", vhost=vhost, vuuid=vm.vuuid)
+        if not snaplist:
+            snap = Snapshot.objects.get(suuid=suuid)
+            snap.delete()
+            return True
+        else:
+            for snap in snaplist:
+                print ("SNAP", snap['uuid'])
+                if snap['uuid'] == suuid:
+                    return False
+                else:
+                    snap = Snapshot.objects.get(suuid=suuid)
+                    snap.delete()
+                    return True
 
     elif option == "snap_restore":
         cmdCLI = "vim-cmd vmsvc/snapshot.revert " + vm.vuuid + " " + suuid + " 0"
