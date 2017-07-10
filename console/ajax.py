@@ -500,9 +500,13 @@ def modify_vm(request):
 
             if vm.state == "PW":
                 if vm.VHost.VType.vendor == "VB":
+
+                    dvd = Medium.objects.get(id=escape(request.POST.get('image')))
+
                     vmdata['driver'] = escape(request.POST.get('driver'))
                     vmdata['type']=vsw.type
                     vmdata['iface']=vsw.phy_iface
+                    vmdata['image'] = dvd.dpath
 
                     print (vmdata)
                     if vbox_modify(vhost=vm.VHost,vm=vm,data=vmdata):

@@ -482,7 +482,7 @@ def zone_create_vm(vhost,vm):
 
         new_vm.save()
 
-        Add_Client(name=new_vm.name,protocol="ssh",hostname=vhost.ipaddr,port=vhost.sshport,password="test",username=vhost.user)
+        Add_Client(vm=new_vm,vhost=vhost)
 
 
         new_dsk = VDisk (
@@ -691,7 +691,8 @@ def zone_modify(vhost,vm,data):
         mod_vm.save()
 
         Remove_Client(name=vm.name)
-        Add_Client(name=mod_vm.name,protocol="ssh",hostname=vhost.ipaddr,port=vhost.sshport,password="test",username=vhost.user)
+        Add_Client(vm=mod_vm,vhost=vhost)
+
 
         print ("Cambios", mod_vm.cpu, " ", mod_vm.mem)
         print("DE MOD")

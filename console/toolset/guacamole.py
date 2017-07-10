@@ -1,4 +1,4 @@
-import random
+import random, re
 from DjangoWeb.settings import BASE_DIR
 from xml.etree import ElementTree as ET
 from console.models import VHost,VType, VMachine,   Datastore, OsType, Snapshot, Remote_Admin, VSwitch, Medium
@@ -21,38 +21,50 @@ def Remove_Client(name):
 
     xml_conf.write(conf_file)
 
-def Add_Client(name,protocol,hostname,port,password,**kwargs):
-
-    if kwargs.get('username'):
-        username = kwargs['username']
-
+def Add_Client(vm,vhost):
 
 
     xml_conf =  ET.parse(conf_file)
     xml_root = xml_conf.getroot()
 
-    if port == None:
-        port = " "
-    if password == None:
-        password = " "
+
+    if vhost.VType.vendor == "VB":
+        new_client = ET.Element('config', name=vm.name, protocol="rdp")
+        new_param = ET.Element('param', name="hostname", value=vhost.ipaddr)
+        new_client.append(new_param)
+        new_param = ET.Element('param', name="port", value=str(vm.rdport))
+        new_client.append(new_param)
+        new_param = ET.Element('param', name="username", value=vm.rdpuser)
+        new_client.append(new_param)
+        new_param = ET.Element('param', name="password", value=vm.rdppass)
+        new_client.append(new_param)
+        xml_root.append(new_client)
+        xml_conf.write(conf_file)
+
+    elif vhost.VType.vendor == "ZN":
+
+        target = open(vhost.sshkey, 'r')
+        key = ""
+
+        for line in target:
+            txt = re.sub(r'&#10;','',line)
+            key=key+txt
+
+        target.close()
+
+        new_client = ET.Element('config', name=vm.name, protocol="ssh")
+        new_param = ET.Element('param', name="hostname", value=vhost.ipaddr)
+        new_client.append(new_param)
+        new_param = ET.Element('param', name="port",value=str(vhost.sshport))
+        new_client.append(new_param)
+        new_param = ET.Element('param', name="username", value=vhost.user)
+        new_client.append(new_param)
+        new_param = ET.Element('param', name="private-key", value=key)
+        new_client.append(new_param)
+        xml_root.append(new_client)
+        xml_conf.write(conf_file)
 
 
-    new_client = ET.Element('config', name=name, protocol=protocol)
-    for item in ["hostname", "port", "username", "password"]:
-        if item == "hostname":
-            new_param = ET.Element('param', name=item, value=hostname)
-            new_client.append(new_param)
-        elif item == "port":
-            new_param = ET.Element('param', name=item, value=str(port))
-            new_client.append(new_param)
-        elif item == "username" and not protocol == "vnc":
-            new_param = ET.Element('param', name=item, value=username)
-            new_client.append(new_param)
-        elif item == "password":
-            new_param = ET.Element('param', name=item, value=password)
-            new_client.append(new_param)
-    xml_root.append(new_client)
-    xml_conf.write(conf_file)
 
 def Modify_Client(name, **kwargs):
     '''
@@ -153,7 +165,6 @@ def Update_Remote(list_machines):
     target.close()
 
     for item in list_machines:
-        if item.VHost.VType.vendor == "VB":
-            Add_Client(name=item.name, protocol="rdp", hostname=item.VHost.ipaddr, port=item.rdport, username=item.rdpuser,password=item.rdppass)
-        elif item.VHost.VType.vendor == "VW":
-            Add_Client(name=item.name, protocol="vnc", hostname=item.VHost.ipaddr, port=item.rdport, password=item.rdppass)
+        vhost=VHost.objects.get(id=item.VHost.id)
+        vm = VMachine.objects.get(id=item.id)
+        Add_Client(vm=vm,vhost=vhost)

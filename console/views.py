@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.html import escape
 from django.http import Http404, HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
-from .models import VMachine, VHost, VType, Datastore, OsType, VSwitch # Borrar si no se usa Ifaces, VBOX_IFACE, VDisk
+from .models import VMachine, VHost, VType, Datastore, OsType, VSwitch, Medium # Borrar si no se usa Ifaces, VBOX_IFACE, VDisk
 from .forms import VHForm, DSForm
 from .toolset.vbox import vbox_info, vbox_create, vbox_modify, vbox_create_dstore, vbox_delete_vm
 from .toolset.esx import esx_info, esx_create_vm, esx_create_net, esx_modify
@@ -53,13 +53,15 @@ def form_vm(request):
 
             if VH.VType.vendor == "VB":
 
+                dvd = Medium.objects.get(id=escape(request.POST.get('image')))
+
                 vmdata['type']=vsw.type
                 vmdata['iface']=vsw.phy_iface
                 vmdata['net']=vsw.name
-                vmdata['image'] = escape(request.POST.get('image'))
-
+                vmdata['image'] = dvd.dpath + "/" + dvd.name
 
                 print(vmdata)
+
                 if vbox_create(vhost=VH,vm=vmdata):
                     data = {
                         'msg': 'The Virtual Machine has been created. Please click close to continue',

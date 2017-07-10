@@ -456,7 +456,8 @@ def vbox_create(vhost,vm):  #Decidir si lista o clase para mandar los parametros
     ##Add Controlers
     cmdCLI="VBoxManage storagectl " + vm['name']  + " --name " + vm['name'] +"_SATA --add sata"
     ssh.addCommand(cmdCLI)
-
+    cmdCLI = "VBoxManage storagectl " + vm['name'] + " --name " + vm['name'] + "_IDE --add ide"
+    ssh.addCommand(cmdCLI)
 
     ##Create DISK
     dpath = vm['datastore']  + "/" + vm['name'] + "/" + vm['name'] + "_HD.vdi"
@@ -468,12 +469,8 @@ def vbox_create(vhost,vm):  #Decidir si lista o clase para mandar los parametros
     ssh.addCommand(cmdCLI)
 
     #Add ISO
-    # if DVD == False
-    #    dvdmedium.load()
-    #else:
-    #    cmdCLI = "VBoxManage storageattach " + seld.name +" --storagectl " +  self.name +"_SATA --type dvddrive --medium " self.datastore + "/" + self.DVDiso
-    #execCMD(vhost,cmdCLI)
-
+    cmdCLI = "VBoxManage storageattach " + vm['name'] +" --storagectl " +  vm['name'] +"_IDE --type dvddrive --port 0 --device 0 --medium " + vm['image']
+    ssh.addCommand(cmdCLI)
 
     ##ADD cpu
     cmdCLI = "VBoxManage modifyvm " + vm['name'] + " --cpus" + vm['cpu']
@@ -554,7 +551,7 @@ def vbox_create(vhost,vm):  #Decidir si lista o clase para mandar los parametros
         new_dsk.save()
 
 
-        Add_Client(name=new_vm.name,protocol="rdp", port=new_vm.rdport, username=new_vm.rdpuser, password=new_vm.rdppass, hostname=vhost.ipaddr)
+        Add_Client(vm=new_vm,vhost=vhost)
 
 
         return True
@@ -596,6 +593,11 @@ def vbox_modify(vhost,vm,data):
     ssh.addCommand(cmdCLI)
     cmdCLI = "vboxmanage modifyvm " + vm.name + " --name " + data['name']
     ssh.addCommand(cmdCLI)
+
+    #Add ISO
+    cmdCLI = "VBoxManage storageattach " + vm.name +" --storagectl " +  vm.name +"_IDE --type dvddrive --port 0 --device 0 --medium " + data['image']
+    ssh.addCommand(cmdCLI)
+
 
 
     log = ssh.execCMD()

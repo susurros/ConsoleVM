@@ -630,6 +630,7 @@ def update_model(option, **kwargs):  # Mirar como acturalizar
 
     elif option == "medium":
 
+        Medium.objects.all().delete()
         list_vhost = VHost.objects.all()
 
         for VH in list_vhost:
