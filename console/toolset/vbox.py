@@ -501,7 +501,8 @@ def vbox_create(vhost,vm):  #Decidir si lista o clase para mandar los parametros
     ssh.addCommand(cmdCLI)
 
     ##Enamble VRDE AUTH
-    cmdCLI = "VBoxManage modifyvm " + vm['name'] + " --vrdeauthtype external"
+    #cmdCLI = "VBoxManage modifyvm " + vm['name'] + " --vrdeauthtype external"
+    cmdCLI = "VBoxManage modifyvm " + vm['name'] + " --vrdeauthtype null"
     ssh.addCommand(cmdCLI)
     #Create pass
     print ("Password_ ",remote_pass)
@@ -509,7 +510,7 @@ def vbox_create(vhost,vm):  #Decidir si lista o clase para mandar los parametros
     passhash = vbox_paser(option="rdppass", data=execCMD(vhost=vhost, cmd=cmdCLI))
     print (passhash)
     #ADD Console_Port VRDE USER and pass
-    cmdCLI = "VBoxManage setextradata " + vm['name'] + " VBoxAuthSimple/users/" + remote_user + " " + passhash
+    #cmdCLI = "VBoxManage setextradata " + vm['name'] + " VBoxAuthSimple/users/" + remote_user + " " + passhash
     ssh.addCommand(cmdCLI)
     cmdCLI = "VBoxManage modifyvm " + vm['name'] + " --vrde on"
     ssh.addCommand(cmdCLI)
