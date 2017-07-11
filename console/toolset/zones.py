@@ -478,6 +478,7 @@ def zone_create_vm(vhost,vm):
             VHost_id=vhost.id,
             OsType_id= OsType.objects.get(name=vm['ostype']).id,
             Datastore_id= Datastore.objects.get(dpath=vm['datastore']).id,
+            rdport="22",
         )
 
         new_vm.save()

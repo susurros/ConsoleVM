@@ -338,7 +338,8 @@ def update_model(option, **kwargs):  # Mirar como acturalizar
                         vmachine.name = vmname
                         vmachine.cpu = zone_info(option="vm_ncpu", vhost=item, vmname=vmname)
                         vmachine.mem = zone_info(option="vm_mem", vhost=item, vmname=vmname)
-                        vmachine.rdport = zone_info(option="vm_rdport", vhost=item, vmname=vmname)
+                        #vmachine.rdport = zone_info(option="vm_rdport", vhost=item, vmname=vmname)
+                        vmachine.rdport = 22
                         vmachine.state = zone_info(option="vm_state", vhost=item, vmname=vmname)
                         vmachine.VSwitch = vsw
                         vmachine.save()

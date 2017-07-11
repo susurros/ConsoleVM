@@ -782,7 +782,7 @@ def remote(request):
         ajax_id = int(request.POST.get('vmid'))
         vm = VMachine.objects.get(id=ajax_id)
 
-        print ("ID MAQ:", ajax_id)
+        print ("ID MAQ:", ajax_id, vm, vm.rdport)
         if ajax_id == vm.id:
 
             if vm.rdport:
