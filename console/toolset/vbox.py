@@ -1,4 +1,4 @@
-import re
+import re, time
 from console.models import OsType, Datastore, VHost, VMachine, VDisk, Snapshot, VSwitch
 from .guacamole import Add_Client, Remove_Client, Console_Port
 from .ssh import execCMD, sshSession
@@ -87,10 +87,11 @@ def vbox_paser(option,data,**kwargs):
     elif option == "vm_run":
         for line in data:
             rx = re.search('^"(.+)" {(.+)}', line)
-            if re.match('^"(.+)" {(.+)}', line).group(1) == vmname:
-                return True
-            else:
-                return False
+            print("Run",rx)
+            if rx:
+                if re.match('^"(.+)" {(.+)}', line).group(1) == vmname:
+                    return True
+
 
     elif option == "get_name":
         for line in data:
@@ -391,6 +392,7 @@ def vbox_control(option,**kwargs):
 
         cmdCLI = "vboxmanage startvm " + vmachine.name + " --type headless"
         execCMD(vhost=vhost, cmd=cmdCLI)
+        time.sleep(5)
         if vbox_info(option="vm_run",vhost=vhost,vmname=vmachine.name):
             vmachine.state = vbox_info(option="vm_state", vhost=vhost, vmname=vmachine.name)
             vmachine.uptime = vbox_info(option="vm_uptime", vhost=vhost, vmname=vmachine.name)
