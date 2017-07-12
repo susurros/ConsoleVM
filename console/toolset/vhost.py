@@ -399,11 +399,11 @@ def update_model(option, **kwargs):  # Mirar como acturalizar
                         os = OsType(name=data['id'], desc=data['desc'], VType=item.VType)
                         os.save()
 
-            #elif item.VType.vendor == "VW":
-            #    for data in esx_info(option="ostypes", vhost=item):
-            #        if not OsType.objects.filter(name=data['id'], VType=item.VType).exists():
-            #            os = OsType(name=data['id'], desc=data['desc'], VType=item.VType)
-            #            os.save()
+            elif item.VType.vendor == "VW":
+                for data in esx_info(option="ostypes", vhost=item):
+                    if not OsType.objects.filter(name=data['id'], VType=item.VType).exists():
+                        os = OsType(name=data['id'], desc=data['desc'], VType=item.VType)
+                        os.save()
 
             else:
                 for data in zone_info(option="ostypes", vhost=item):
