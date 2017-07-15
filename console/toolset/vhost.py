@@ -506,7 +506,7 @@ def update_model(option, **kwargs):  # Mirar como acturalizar
 
                     dpath = vbox_info(option="vm_path", vhost=item, vmname=machine['name'])
 
-                    if not Datastore.objects.filter(dpath=dpath).exists():
+                    if not Datastore.objects.filter(dpath=dpath, VHost_id=item.id).exists():
                         ds_name = re.match('^.+/(.+$)', dpath).group(1)
                         ds = Datastore(name=ds_name, dpath=dpath, VHost_id=item.id)
                         ds.save()
@@ -516,7 +516,7 @@ def update_model(option, **kwargs):  # Mirar como acturalizar
                 dstore = esx_info(option="datastore",vhost=item)
 
                 for ds in dstore:
-                    if Datastore.objects.filter(dpath=ds['dpath']).exists():
+                    if Datastore.objects.filter(dpath=ds['dpath'],VHost=item.id).exists():
                         current_ds = Datastore.objects.get(dpath=ds['dpath'])
                         current_ds.name = ds['dname']
                         current_ds.dpath = ds['dpath']
@@ -533,12 +533,10 @@ def update_model(option, **kwargs):  # Mirar como acturalizar
             elif item.VType.vendor == "ZN":
                 dpath = zone_info(option="datastore", vhost=item)
 
-                print (" LIST PATH", dpath)
 
                 for ds in dpath:
 
-                    if Datastore.objects.filter(dpath=ds['dpath']).exists():
-                        print ("Exists")
+                    if Datastore.objects.filter(dpath=ds['dpath'],VHost=item.id).exists():
                         current_ds = Datastore.objects.get(dpath=ds['dpath'])
                         current_ds.name = ds['dname']
                         current_ds.dpath = ds['dpath']
