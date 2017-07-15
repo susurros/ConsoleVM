@@ -596,7 +596,7 @@ def zone_clone(vhost,vm,clone_name):
             VSwitch_id=vm.VSwitch.id,
         )
 
-        Add_Client(name=new_vm.name,protocol="ssh",hostname=vhost.ipaddr,port=vhost.sshport,password="test",username=vhost.user)
+        Add_Client(vm=new_vm,vhost=vhost)
 
         new_vm.save()
 
