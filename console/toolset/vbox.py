@@ -537,6 +537,7 @@ def vbox_create(vhost,vm):  #Decidir si lista o clase para mandar los parametros
             VHost_id=vhost.id,
             OsType_id= OsType.objects.get(name=vm['ostype']).id,
             Datastore_id= Datastore.objects.get(dpath=vm['datastore']).id,
+            VSwitch_id=VSwitch.objects.get(name=vmd['net']).id,
             rdport=remote_port,
             rdppass=remote_pass,
             rdpuser=remote_user,

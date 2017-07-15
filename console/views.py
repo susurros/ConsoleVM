@@ -60,6 +60,7 @@ def form_vm(request):
                 vmdata['net']=vsw.name
                 vmdata['image'] = dvd.dpath + "/" + dvd.name
 
+
                 print(vmdata)
 
                 if vbox_create(vhost=VH,vm=vmdata):
