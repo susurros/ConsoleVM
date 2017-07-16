@@ -694,8 +694,7 @@ def vbox_clone(vhost,vm,clone_name):
     )
     new_vm.save()
 
-    Add_Client(name=new_vm.name, protocol="rdp", port=new_vm.rdport, username=new_vm.rdpuser, password=new_vm.rdppass,
-               hostname=vhost.ipaddr)
+    Add_Client(vm=new_vm,vhost=vhost)
 
     if VMachine.objects.get(vuuid=vbox_info(option="get_uuid",vhost=vhost,vmname=clone_name)):
         return True
