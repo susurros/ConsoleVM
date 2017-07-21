@@ -87,7 +87,7 @@ def vbox_paser(option,data,**kwargs):
     elif option == "vm_run":
         for line in data:
             rx = re.search('^"(.+)" {(.+)}', line)
-            print("Run",rx)
+
             if rx:
                 if re.match('^"(.+)" {(.+)}', line).group(1) == vmname:
                     return True
@@ -284,7 +284,7 @@ def vbox_info(option,**kwargs):
         return vbox_paser(option=option,data=execCMD(vhost=vhost,cmd=cmdCLI))
 
     elif option == "ostypes":
-        print ("Querz OS")
+
         cmdCLI = "vboxmanage list ostypes"
         return vbox_paser(option=option,data=execCMD(vhost=vhost,cmd=cmdCLI))
 
@@ -339,10 +339,10 @@ def vbox_info(option,**kwargs):
         return vbox_paser(option=option,data=execCMD(vhost=vhost,cmd=cmdCLI))
 
     elif option == "vm_rdport":
-        print ("VRDE_info", vmname)
+
         cmdCLI = "vboxmanage showvminfo " + vmname + " --machinereadable"
         cfgfile = vbox_paser(option = "vm_cfg", data = execCMD(vhost=vhost,cmd=cmdCLI))
-        print("FIchero config",cfgfile)
+
         cmdCLI = "cat " + cfgfile
         return vbox_paser(option=option,data=execCMD(vhost=vhost,cmd=cmdCLI))
 
@@ -507,10 +507,10 @@ def vbox_create(vhost,vm):  #Decidir si lista o clase para mandar los parametros
     cmdCLI = "VBoxManage modifyvm " + vm['name'] + " --vrdeauthtype null"
     ssh.addCommand(cmdCLI)
     #Create pass
-    print ("Password_ ",remote_pass)
+
     cmdCLI = "VBoxManage internalcommands passwordhash " + remote_pass
     passhash = vbox_paser(option="rdppass", data=execCMD(vhost=vhost, cmd=cmdCLI))
-    print (passhash)
+
     #ADD Console_Port VRDE USER and pass
     #cmdCLI = "VBoxManage setextradata " + vm['name'] + " VBoxAuthSimple/users/" + remote_user + " " + passhash
     ssh.addCommand(cmdCLI)
@@ -616,7 +616,7 @@ def vbox_modify(vhost,vm,data):
         mod_vm.VSwitch = VSwitch.objects.get(id=data['vswid'])
         mod_vm.save()
 
-        print ("Cambios", mod_vm.OsType.name, mod_vm.cpu, " ", mod_vm.mem)
+
 
 
         return True
@@ -629,10 +629,10 @@ def vbox_delete_vm(vhost,vm):
     cmdCLI="vboxmanage unregistervm " + vm.name + " --delete"
 
     execCMD(vhost=vhost, cmd=cmdCLI)
-    print (vbox_info(option="get_uuid",vhost=vhost,vmname=vm.name))
+
     if not vbox_info(option="get_uuid",vhost=vhost,vmname=vm.name):
         vmdel = VMachine.objects.get(id=vm.id)
-        print("MAquina",vmdel.name, "Puerto",vmdel.rdport)
+
         Console_Port(option="disable",vhost=vhost,rdport=vmdel.rdport)
         vmdel.delete()
 
@@ -658,10 +658,10 @@ def vbox_clone(vhost,vm,clone_name):
     cmdCLI = "VBoxManage modifyvm " + clone_name + " --vrdeauthtype external"
     ssh.addCommand(cmdCLI)
     # Create pass
-    print("PASSOED",remote_pass)
+
     cmdCLI = "VBoxManage internalcommands passwordhash " + remote_pass
     passhash = vbox_paser(option="rdppass", data=execCMD(vhost=vhost, cmd=cmdCLI))
-    print(passhash)
+
     # ADD Console_Port VRDE USER and pass
     cmdCLI = "VBoxManage setextradata " + clone_name + " VBoxAuthSimple/users/" + remote_user + " " + passhash
     ssh.addCommand(cmdCLI)
@@ -748,7 +748,7 @@ def vbox_snapshots(option,vhost,vm,**kwargs):
         cmdCLI = "vboxmanage snapshot " + vm.vuuid + "  delete " + suuid 
         data = execCMD(vhost=vhost, cmd=cmdCLI)
 
-        print (cmdCLI)
+
 
         snaplist = vbox_info(option="snap_list", vhost=vhost, vmname=vm.name)
         if not snaplist:
@@ -767,7 +767,7 @@ def vbox_snapshots(option,vhost,vm,**kwargs):
         
     elif option == "snap_restore":
         cmdCLI = "vboxmanage snapshot " + vm.vuuid + " restore " + suuid
-        print(cmdCLI)
+
         execCMD(vhost=vhost, cmd=cmdCLI)
         if suuid == vbox_info(option="current_snap", vhost=vhost, vmname=vm.name):
             return True

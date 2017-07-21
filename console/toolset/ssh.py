@@ -35,7 +35,7 @@ class sshSession:
         cmdlog = []
 
         for cmd in self.cmd:
-            print(cmd)
+
             stdin, stdout, stderr = self.client.exec_command(cmd)
             cmdlog.append(stdout.readlines())
             cmdlog.append(stderr.readlines())

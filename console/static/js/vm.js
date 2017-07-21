@@ -22,7 +22,7 @@ $(document).ready(function(){
                     var vendor = data.vendor;
                     var isos = JSON.parse(data.isolist);
 
-                    console.log (vendor);
+                    
 
                     if (vendor == "ZN"){
                         $("#Net_Body").empty();
@@ -130,7 +130,7 @@ $(document).ready(function(){
             image: $("#image").val(),
         }
 
-        console.log(data)
+        
 
         $.ajax(
              {
@@ -192,8 +192,8 @@ $(document).ready(function(){
                     "url": "/ajax/modifyvm/",
                     "data": data,
                     "success": function(data) {
-                        console.log(data) //quit only for debugging
-                        console.log(data.vhostname)
+                        
+                        
 
                         var vswlist = JSON.parse(data.vswlist);
                         var oslist = JSON.parse(data.oslist);
@@ -372,7 +372,7 @@ $(document).ready(function(){
             var data = {
                 vmid: $("#"+ pdiv + "> #vmid").val(),
             }
-            console.log(data)
+            
             $.ajax(
                 {
                     "type": "POST",
@@ -499,8 +499,8 @@ $(document).ready(function(){
                                     vmid: $("#"+ pdiv + "> #vmid").val(),
                                     suuid: $("#"+ pdiv + "> #suuid").val(),
                                 }
-                                console.log (pdiv)  //quit only for debugging
-                                console.log (data)  //quit only for debugging
+                                
+                                
 
                                 $.ajax(
                                     {
@@ -529,8 +529,8 @@ $(document).ready(function(){
                                     vmid: $("#"+ pdiv + "> #vmid").val(),
                                     suuid: $("#"+ pdiv + "> #suuid").val(),
                                 }
-                                console.log (pdiv)  //quit only for debugging
-                                console.log (data)  //quit only for debugging
+                                
+                                
 
                                 $.ajax(
                                     {
@@ -608,7 +608,7 @@ $(document).ready(function(){
                         var athml = data.athml;
                         var url = data.url;
                         var client = window.btoa([name, cnx, athml].join('\0'));
-                        console.log(client+url) //debug
+                        
                         var myWindow = window.open(url+client);
 
                     }
@@ -639,7 +639,7 @@ $(document).ready(function(){
                 "url": "/ajax/updatedb/",
                 "data": data,
                 success: function(data) {
-                    console.log(data.msg)
+                    
                     $("#info_msg").text(data.msg);
                     $("#md_msg").modal();
                 },

@@ -81,10 +81,10 @@ def vhost_parser(option,data,**kwargs):
                 return ds_info
 
     elif option == "images":
-        print ("INSIDE IMAGES")
+
         images = []
         for iso in data:
-            print (iso)
+
             images.append(iso)
         return images
 
@@ -172,7 +172,7 @@ def update_model(option, **kwargs):  # Mirar como acturalizar
 
     if option == "vmachines":
 
-        print("update vmachines")
+
 
         VH = VHost.objects.all()
 
@@ -331,7 +331,7 @@ def update_model(option, **kwargs):  # Mirar como acturalizar
                         if VSwitch.objects.filter(VHost__id=item.id, name=vnic).exists():
                             vsw = VSwitch.objects.get(VHost__id=item.id, name=vnic)
                         else:
-                            print ("swith", machine)
+
                             vsw = None
 
                         vmachine = VMachine.objects.get(vuuid=machine['uuid'])
@@ -352,7 +352,7 @@ def update_model(option, **kwargs):  # Mirar como acturalizar
                         if VSwitch.objects.filter(VHost__id=item.id, name=vnic).exists():
                             vsw = VSwitch.objects.get(VHost__id=item.id, name=vnic)
                         else:
-                            print ("swith", machine)
+
                             vsw = None
 
                         os = OsType.objects.filter(VType__id=item.VType.id).get(name=zone_info(option="vm_os", vhost=item, vmname=vmname))
@@ -571,7 +571,7 @@ def update_model(option, **kwargs):  # Mirar como acturalizar
 
                     for vmachine in list_machines:
 
-                        print ("Machine,state,id",vmachine,esx_info(option="vm_state", vhost=item, vuuid=vmachine.vuuid),vmachine.vuuid)
+
                         vmachine.state = esx_info(option="vm_state", vhost=item, vuuid=vmachine.vuuid)
 
                         vmachine.save()
@@ -638,7 +638,7 @@ def update_model(option, **kwargs):  # Mirar como acturalizar
 
             for item in list_images:
 
-                print (item)
+
                 if not Medium.objects.filter(VHost__id=VH.id,dpath=item).exists():
 
                     iso_name = re.sub(VH.isopath + "/",'',item)

@@ -61,7 +61,7 @@ def form_vm(request):
                 vmdata['image'] = dvd.dpath + "/" + dvd.name
 
 
-                print(vmdata)
+
 
                 if vbox_create(vhost=VH,vm=vmdata):
                     data = {
@@ -87,7 +87,7 @@ def form_vm(request):
                     }
                     return JsonResponse(data)
                 else:
-                    print ("Error Creating the Virtual Machine: ", msg)
+
                     data = {
                     'msg': 'Error: The Virtual Machine has not been created. Please contact with the administrator',
                     }
@@ -139,8 +139,8 @@ def dash_vhost(request):
 def form_vhost (request):
 
     if request.is_ajax() and request.method == "POST":
-        print(escape(request.POST.get('ipaddr')))
-        print(request.POST.get('ipaddr'))
+
+
 
         ajax_id = int(escape(request.POST.get('vhostid')))
         VH = VHost.objects.get(id=ajax_id)
@@ -178,14 +178,14 @@ def dash_datastore(request):
 
     for item in ds:
 
-        print ("Nombre Datastore %s",item.dpath)
+
 
 
         VH = VHost.objects.get(id=item.VHost.id)
 
         dsize = vhost_info(option='dstore_info',vhost=VH,dpath=item.dpath)
 
-        print (dsize)
+
         data = {
             'id' : item.id,
             'vhost': item.VHost.name,
@@ -355,8 +355,8 @@ def form_network(request):
                     return JsonResponse(data)
 
         else:
-            print("Existe")
-            print(VSwitch.objects.get(VHost_id=vhost_id, name=net_name, type=ntype))
+
+
             data = {'URI': '/vhost/network', 'msg': "Error: A network with this name already exits in the Virtual Host"}
             return JsonResponse(data)
 

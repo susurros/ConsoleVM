@@ -104,7 +104,7 @@ $(document).ready(function(){
         var pdiv = $(this).parent().attr('id');
         var vsw_name = $("#"+ pdiv + "> #vsw_name").val();
         var vsw_id = $("#"+ pdiv + "> #vsw_id").val();
-        console.log("id VSWITHC " + vsw_id)
+        
         $("#delete_msg").text("The Virtual Network " + vsw_name +  "is going to be deleted");
         $("#del_vsw").attr("value",vsw_id);
         $("#md_delete_net").modal();
@@ -114,7 +114,7 @@ $(document).ready(function(){
         e.preventDefault();
 
         var vsw_id = $("#del_vsw").val();
-        console.log("id VSWITHC " + vsw_id);
+        
 
         var data = { vsw_id: vsw_id};
 
@@ -153,7 +153,7 @@ $(document).ready(function(){
     $("#btn_update").on('click',function (e) {
         e.preventDefault();
 
-        console.log("Click")
+        
 
         var data = {
             type: "vswitch",
@@ -165,7 +165,7 @@ $(document).ready(function(){
                 "url": "/ajax/updatedb/",
                 "data": data,
                 success: function(data) {
-                    console.log(data.msg)
+                    
                     $("#info_msg").text(data.msg);
                     $("#md_msg").modal();
                 },

@@ -16,7 +16,7 @@ def Remove_Client(name):
 
     for item in  list_clients:
         if item.attrib['name'] == name:
-            print("Cliente dummy", item)
+
             xml_root.remove (item)
 
     xml_conf.write(conf_file)
@@ -123,7 +123,7 @@ def Console_Port(option,vhost,**kwargs):
 
     if kwargs.get('rdport'):
         remote_port = kwargs['rdport']
-        print ("Puerto Remote", remote_port)
+
 
 
     if option == "enable":
@@ -131,18 +131,18 @@ def Console_Port(option,vhost,**kwargs):
         while not OK_port:
             remote_port = random.randint(60000,65000)
 
-            print ("PUERTO", remote_port)
+
 
             if not Remote_Admin.objects.filter(VHost_id=vhost.id, rdport=remote_port).exists():
 
-                print ("Ceando nuvo pierto")
+
                 new_port = Remote_Admin(
                     VHost=vhost,
                     rdport=remote_port,
                     used=True,
                 )
 
-                print (new_port.VHost.id)
+
                 new_port.save()
             return new_port.rdport
     elif option == "disable":

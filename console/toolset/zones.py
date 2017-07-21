@@ -60,7 +60,7 @@ def zone_parser(option,data,**kwargs):
         portgroups = []
         for line in data:
             portgroups.append(re.sub('\n','',line))
-        print (portgroups)
+
         return portgroups
 
     elif option == "zpool":
@@ -73,7 +73,7 @@ def zone_parser(option,data,**kwargs):
         dslist = []
         for line in data:
             rx = re.search('(.+)\s;\s(.+)',line)
-            print(rx)
+
             if rx:
                 vmname = re.match('(.+)\s;\s(.+)',line).group(1)
                 dpath = re.sub('/'+vmname,'',re.match('(.+)\s;\s(.+)',line).group(2))
@@ -92,7 +92,7 @@ def zone_parser(option,data,**kwargs):
                                 'dpath': dpath,
                             }
                             dslist.append(data)
-        print(dslist)
+
         return dslist
 
     #Commands Info_Zones
@@ -156,13 +156,13 @@ def zone_parser(option,data,**kwargs):
         return vmostype
 
     elif option == "vm_uptime":
-        print ("utime")
+
         for line in data:
-            print (line)
+
             rx = re.search ('\s+\d+:\d\d\w\w\s+up\s(.+),\s+\d+\s+user',line)
             if rx:
                 regex = re.sub('"','',re.match('\s+\d+:\d\d\w\w\s+up\s(.+),\s+\d+\s+user',line).group(1))
-                print (regex)
+
                 return regex
 
     elif option == "vm_state":
@@ -373,7 +373,7 @@ def zone_control(option,**kwargs):
     if kwargs.get('vhost'):
         vhost = kwargs['vhost']
 
-    print ("CONTROL ZONE")
+
 
     if option == "start_vm":
         cmdCLI = "zoneadm -z " + vmachine.name + " boot"
@@ -387,10 +387,10 @@ def zone_control(option,**kwargs):
             return False
 
     elif option == "stop_vm":
-        print ("STOP VN")
+
 
         cmdCLI = "zoneadm -z " + vmachine.name + " halt "
-        print (cmdCLI)
+
 
         execCMD(vhost=vhost, cmd=cmdCLI)
         vmachine.state = zone_info(option="vm_state", vhost=vhost, vmname=vmachine.name)
@@ -572,7 +572,7 @@ def zone_clone(vhost,vm,clone_name):
     ssh.addCommand(cmdCLI)
 
 
-    print (ssh.showCommand())
+
 
 
 
@@ -580,7 +580,7 @@ def zone_clone(vhost,vm,clone_name):
     log = ssh.execCMD()
     ssh.closeSession()
 
-    print (log)
+
 
     vuuid = zone_info(option="get_uuid", vhost=vhost, vmname=clone_name)
     if vuuid:
@@ -619,7 +619,7 @@ def zone_delete_net(vhost_id,pg_name):
 
     vhost = VHost.objects.get(id=vhost_id)
     cmdCLI = "dladm delete-etherstub " + pg_name
-    print (cmdCLI)
+
     execCMD(vhost=vhost, cmd=cmdCLI)
 
     if zone_info(option="port_group_exists",vhost=vhost,portgroup=pg_name):
@@ -642,11 +642,11 @@ def zone_delete_dstore(vhost,dpath):
 
     dstore_path = dpath[1:]
 
-    print (dstore_path)
+
 
     if not dstore_path == "rpool" or not dstore_path == "/rpool":
         cmdCLI = "zfs destroy -rf " + dstore_path
-        print (cmdCLI)
+
         execCMD(vhost=vhost, cmd=cmdCLI)
 
         if zone_info(option="datastore_zfs_path",vhost=vhost,datastore=dstore_path) == dstore_path:
@@ -679,7 +679,7 @@ def zone_modify(vhost,vm,data):
     ssh.addCommand(cmdCLI)
     ssh.execCMD()
 
-    print (zone_info(option="get_uuid", vhost=vhost, vmname=data['name']))
+
 
 
     if zone_info(option="get_uuid", vhost=vhost, vmname=data['name']):
@@ -695,8 +695,8 @@ def zone_modify(vhost,vm,data):
         Add_Client(vm=mod_vm,vhost=vhost)
 
 
-        print ("Cambios", mod_vm.cpu, " ", mod_vm.mem)
-        print("DE MOD")
+
+
 
         return True
 

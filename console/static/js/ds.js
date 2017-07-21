@@ -19,7 +19,7 @@ $(document).ready(function(){
                 "dataType": 'json',
                 "success":function(data){
 
-                    console.log(data)
+                    
 
                     var vendor = data.vendor;
 
@@ -27,7 +27,7 @@ $(document).ready(function(){
                     if (vendor == "ZN"){
 
                         var zpool = data.zpool_list;
-                        console.log(zpool)
+                        
 
                         $("#Dpath_Panel").empty();
                         $("#Dpath_Panel").append('<select class="form-control"  id="id_dpath"></select>');
@@ -57,7 +57,7 @@ $(document).ready(function(){
         e.preventDefault();
 
 
-        console.log("open Modal")
+        
 
         var data = { jq_req: "vhost"}
 
@@ -127,7 +127,7 @@ $(document).ready(function(){
         e.preventDefault();
 
         var del_ds = $("#del_ds").val();
-        console.log("id VSWITHC " + del_ds);
+        
 
         var data = { ds_id: del_ds};
 
@@ -180,7 +180,7 @@ $(document).ready(function(){
                 "url": "/ajax/updatedb/",
                 "data": data,
                 success: function(data) {
-                    console.log(data.msg)
+                    
                     $("#info_msg").text(data.msg);
                     $("#md_msg").modal();
                 },

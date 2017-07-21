@@ -150,7 +150,7 @@ def pause_vm(request):
 
                 state_pause = vbox_control(option="pause_vm", vhost=VH, vm=vm)
 
-                print (state_pause)
+
 
                 if state_pause == "paused":
                     data = {'msg': "The Virtual Machine %s has been paused" % vm.name}
@@ -164,7 +164,7 @@ def pause_vm(request):
 
                 state_pause = esx_control(option="pause_vm", vhost=VH, vm=vm)
 
-                print (state_pause)
+
 
                 if state_pause == "paused":
                     data = {'msg': "The Virtual Machine %s has been paused" % vm.name}
@@ -400,7 +400,7 @@ def delete_vm(request):
 
 def modify_vm(request):
 
-    print (request.POST.get('jqreq') )
+
 
     if request.is_ajax() and request.POST.get('jqreq') == "get_data":
 
@@ -408,11 +408,11 @@ def modify_vm(request):
         vm = VMachine.objects.get(id=ajax_id)
 
 
-        print (ajax_id)
-        print (vm.id)
+
+
         if int(ajax_id) == int(vm.id):
 
-            print ("Insde Mod Update")
+
 
             # Update OS
             os = OsType.objects.all().filter(VType_id=vm.VHost.VType)
@@ -471,7 +471,7 @@ def modify_vm(request):
 
 
 
-            print ("VM DATA",data)
+
             return JsonResponse(data)
         else:
              raise Http404
@@ -508,7 +508,7 @@ def modify_vm(request):
                     vmdata['iface']=vsw.phy_iface
                     vmdata['image'] = dvd.dpath
 
-                    print (vmdata)
+
                     if vbox_modify(vhost=vm.VHost,vm=vm,data=vmdata):
                         update_model(option="vmachines")
                         data = {'msg': "The Virtual Machine " + vm.name + " has been modified"}
@@ -520,7 +520,7 @@ def modify_vm(request):
 
                 elif vm.VHost.VType.vendor == "VW":
                     vmdata['driver'] = escape(request.POST.get('driver'))
-                    print (vmdata)
+
                     if esx_modify(vhost=vm.VHost,vm=vm,data=vmdata):
                         data = {'msg': "The Virtual Machine " + vm.name + " has been modified"}
                         return JsonResponse(data)
@@ -529,7 +529,7 @@ def modify_vm(request):
                         return JsonResponse(data)
 
                 elif vm.VHost.VType.vendor == "ZN":
-                    print (vmdata)
+
                     if zone_modify(vhost=vm.VHost, vm=vm, data=vmdata):
                         data = {'msg': "The Virtual Machine " + vm.name + " has been modified"}
                         return JsonResponse(data)
@@ -547,7 +547,7 @@ def modify_vm(request):
 
 def clone_vm(request):
 
-    print ("Clone")
+
     if request.is_ajax() and request.POST:
         ajax_id = int(request.POST.get('clid'))
         vm = VMachine.objects.get(id=ajax_id)
@@ -675,21 +675,21 @@ def form_vm(request):
                 data['rdpport'] = request.session['rdpport']
                 data['meddpath'] = request.session['meddpath']
                 vm = esx_create_vm(vhost=VH,vm=data)
-                print (vm)
+
             elif VH.VType.vendor == "ZN":
                 data['rdpuser'] = request.session['rdpuser']
                 data['rdppass'] = request.session['rdppass']
                 data['rdpport'] = request.session['rdpport']
                 vm = zone_create_vm(vhost=VH,vm=data)
 
-            print (vm)
+
             if vm == "OK":
 
                 session_keys =['vhost', 'vmname', 'cpu','mem','os','dstore','dsksz','step']
                 for key in session_keys:
-                    print(request.session[key])
+
                     request.session[key] = ""
-                    print (request.session[key])
+
 
                 data = { 'msg': "Virtual Machine Created",
                          'URI': '/vmachine/',
@@ -782,7 +782,7 @@ def remote(request):
         ajax_id = int(request.POST.get('vmid'))
         vm = VMachine.objects.get(id=ajax_id)
 
-        print ("ID MAQ:", ajax_id, vm, vm.rdport)
+
         if ajax_id == vm.id:
 
             if vm.rdport:
@@ -865,7 +865,7 @@ def vhost_update_query(request):
             'isopath': VH.isopath,
         }
 
-        print (data)
+
         return JsonResponse(data)
     else:
         return Http404
@@ -876,7 +876,7 @@ def delete_vhost(request):
         ajax_id = escape(request.POST.get('vhostid'))
         VH = VHost.objects.get(id=ajax_id)
 
-        print ("SOME THING HAPPEND")
+
         data = {
             'URI': "/vhost/",
             "msg": "Virtual Host " + VH.name + " deleted. Remember that the other objects (Virtual Machines,Network and Datastores) asssociented with this Virtual Host also has been deleted from the Database",
@@ -1011,7 +1011,7 @@ def del_net(request):
                     return JsonResponse(data)
 
             elif vsw.VHost.VType.vendor == "ZN":
-                print (vsw.VHost.id)
+
                 if zone_delete_net(vhost_id=vsw.VHost.id, pg_name=vsw.name):
                     vsw.delete();
                     return JsonResponse(data)

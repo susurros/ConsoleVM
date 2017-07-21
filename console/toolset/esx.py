@@ -149,7 +149,7 @@ def esx_parser(option,data,**kwargs):
                     'dfree': re.match('^(.+)\s;\s(.+)\s;\s(.+)\s;\s(.+)\s;\s(.+)\s$', line).group(5),
                 }
                 dstore.append(data)
-        print (dstore)
+
         return dstore
 
     
@@ -264,12 +264,12 @@ def esx_parser(option,data,**kwargs):
                     rem_adm['port'] = re.sub('"','',value)
                 elif property == "password":
                     rem_adm['passwd'] = re.sub('"','',value)
-        print (rem_adm)
+
         return rem_adm
 
     elif option == "vm_os":
         for line in data:
-            print (line)
+
             rx = re.search('guestOS\s=\s"(.+)"', line)
             if rx:
                 regex = re.match('guestOS\s=\s"(.+)"', line).group(1)
@@ -417,7 +417,7 @@ def esx_info(option,**kwargs):
         return esx_parser(option=option,data=execCMD(vhost=vhost,cmd=cmdCLI))
 
     elif option == "get_uuid" or option == "get_name":
-        print (vmname)
+
         cmdCLI = "vim-cmd vmsvc/getall | awk '{print $1," +'";"'+ ",$2}' | grep -v Vmid| grep -i " + vmname
         return esx_parser(option=option,data=execCMD(vhost=vhost,cmd=cmdCLI),vmname=vmname)
 
@@ -457,7 +457,7 @@ def esx_info(option,**kwargs):
     elif option == "vm_os":
 
         cfgfile = esx_info(option="vm_cfg", vhost=vhost, vmname=vmname)
-        print (cfgfile)
+
         cmdCLI = "cat " + cfgfile + "| grep guestOS"
         return esx_parser(option=option, data=execCMD(vhost=vhost, cmd=cmdCLI))
 
@@ -481,11 +481,11 @@ def esx_info(option,**kwargs):
         return esx_parser(option=option, data=execCMD(vhost=vhost, cmd=cmdCLI))
     
     elif option == "current_snap":
-        print ("buuid", vuuid)
+
         snaplist = esx_info(option="snap_list",vhost=vhost,vuuid=vuuid)
-        print (snaplist)
+
         for snap in snaplist:
-            print (snap)
+
             if snap['current'] == True:
                 return snap['uuid']
 
@@ -583,7 +583,7 @@ def esx_create_vm(vhost,vm):
 
             #VMX File Creation
 
-            print("Creating VWARE File")
+
             line = []
 
             line.append('config.version = "8"')
@@ -697,7 +697,7 @@ def esx_create_net(vhost,pg_name,vswitch):
 
     cmdCLI = "vim-cmd hostsvc/net/portgroup_add " + vswitch + " " + pg_name
 
-    print ("COMAND ". cmdCLI)
+
 
     execCMD(vhost=vhost, cmd=cmdCLI)
 
@@ -817,7 +817,7 @@ def esx_modify(vhost,vm,data):
         ssh.execCMD()
         ssh.closeSession()
 
-        print("Cambio_OS", OsType.objects.get(name=data['osname']).id, OsType.objects.get(name=data['osname']).name)
+
 
         ostype = OsType.objects.get(name=data['osname'])
 
@@ -870,7 +870,7 @@ def esx_clone(vhost,vm,clone_name):
     remote_pass = pypass.run()
     remote_port = Console_Port(option="enable",vhost=vhost)
 
-    print ("Remote PORt", remote_port)
+
 
 
     ssh = sshSession(hostip = vhost.ipaddr, hostuser = vhost.user, userkey = vhost.sshkey, port=vhost.sshport)
@@ -922,8 +922,8 @@ def esx_clone(vhost,vm,clone_name):
     ssh.closeSession()
 
 
-    print("OS id", vm.OsType.id)
-    print("SWthich", vm.VSwitch.id)
+
+
 
     vuuid = esx_info(option="get_uuid", vhost=vhost, vmname=clone_name)
 
@@ -996,14 +996,14 @@ def esx_snapshots(option,vhost,vm,**kwargs):
 
     elif option == "snap_create":
         cmdCLI = "vim-cmd vmsvc/snapshot.create " + vm.vuuid + " " + vm.name
-        print (cmdCLI)
+
         execCMD(vhost=vhost, cmd=cmdCLI)
         return esx_info(option="current_snap", vhost=vhost, vuuid=vm.vuuid)
 
     elif option == "snap_delete":
         cmdCLI = "vim-cmd vmsvc/snapshot.remove " + vm.vuuid + " " + suuid
         execCMD(vhost=vhost, cmd=cmdCLI)
-        print (cmdCLI)
+
         snaplist = esx_info(option="snap_list", vhost=vhost, vuuid=vm.vuuid)
         if not snaplist:
             snap = Snapshot.objects.get(suuid=suuid)
@@ -1011,7 +1011,7 @@ def esx_snapshots(option,vhost,vm,**kwargs):
             return True
         else:
             for snap in snaplist:
-                print ("SNAP", snap['uuid'])
+
                 if snap['uuid'] == suuid:
                     return False
                 else:
